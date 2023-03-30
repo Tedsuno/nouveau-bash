@@ -3,4 +3,5 @@
 
 int main(void){
 	printf("Premiere version");
+	printf("Premier git");
 }
