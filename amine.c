@@ -106,23 +106,24 @@ else{
 	perror("Le nom est invalide ou un fichier portant ce nom existe déjà dans ce dossier.");
 }
 }
+
+//strcat est une fonction en C qui permet de concaténer deux chaînes de caractères en ajoutant la deuxième chaîne à la fin de la première.
 void pwd(noeud* courant){
     noeud* c=courant;
-    char path[1000] = "";
-    char str[100] = "";
+    char path[1000] = "/";
+    char chaine[1000];
+    char chaine2[99];
     strcat(path, c->nom);
+    strcpy(chaine,path);
     while(c->pere != NULL){
         c = c->pere;
-        if (c->pere != NULL){
-            strcat(str, "/");
-        }
-        strcat(str, c->nom);
-        strcat(str, path);
-        strcpy(path, str);
-        memset(str, 0, sizeof(str)); // clear str for next iteration
+        strcpy(chaine2,chaine); // chaine = "/TD[1]"
+        strcpy(chaine, c->nom);
+        strcat(chaine, chaine2);
     }
-    printf("%s\n", path);
+    printf("%s\n", chaine);
 }
+
 int main(void) {
     noeud* racine = creer_noeud(true, "/", NULL);
     //noeud* courant= racine;
