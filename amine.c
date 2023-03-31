@@ -181,8 +181,9 @@ noeud* cd(noeud* courant){
 }
 
 noeud* cd_point(noeud* courant){
-    if(courant->pere==NULL) perror("No such file or directory");
-    if(courant->pere!=NULL) return courant->pere;
+    if(courant->pere==NULL){ perror("No such file or directory");}
+    if(courant->pere!=NULL){ return courant->pere;}
+    return NULL;
 }
 
 int main(void) {
@@ -211,6 +212,9 @@ int main(void) {
     //ls(dossier2);
     printf("------------\n");
     courant=cd_chem(courant,"anglais/TD1");
+    printf("%s\n",courant->nom);
+    printf("------------\n");
+    courant=cd_point(courant);
     printf("%s\n",courant->nom);
     //mkdir(racine,"Nouveau dossier");
     //touch(racine,"print");
