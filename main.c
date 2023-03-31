@@ -21,11 +21,28 @@ struct liste_noeud {
 
 typedef struct noeud noeud;
 typedef struct liste_noeud liste_noeud;
-
-void mkdir(noeud* parent, noeud* fils) {
+noeud* creer_noeud(bool b, char* s, noeud* fils) {
+    noeud* g = malloc(sizeof(noeud));
+    g->fils = NULL;
+    g->racine = g;
+    g->pere = NULL;
+    strcpy(g->nom, s);
+    g->est_dossier = b;
+    return g;
+}
+char* capture(const char* nom) {
+    char* result = malloc(strlen(nom) + 1); // Allouer de la mémoire pour la chaîne de caractères de retour
+    if (result != NULL) { // Vérifier si l'allocation a réussi
+        strcpy(result, nom); // Copier la chaîne de caractères passée en paramètre dans la variable de retour
+    }
+    return result; // Retourner la chaîne de caractères
+}
+void mkdir(noeud* parent, const char *nom) {
+    noeud *newDir=creer_noeud(true,capture(nom),NULL);
+    newDir->pere=parent;
     if (parent->fils == NULL) {
         parent->fils = malloc(sizeof(liste_noeud));
-        parent->fils->no = fils;
+        parent->fils->no = newDir;
         parent->fils->succ = NULL;
     } else {
         liste_noeud* ptr = parent->fils;
@@ -33,7 +50,7 @@ void mkdir(noeud* parent, noeud* fils) {
             ptr = ptr->succ;
         }
         ptr->succ = malloc(sizeof(liste_noeud));
-        ptr->succ->no = fils;
+        ptr->succ->no = newDir;
         ptr->succ->succ = NULL;
     }
 }
@@ -45,16 +62,6 @@ void ls(noeud* actuel) {
         printf("%s\n", fils->no->nom);
         fils = fils->succ;
     }
-}
-
-noeud* creer_noeud(bool b, char* s, noeud* fils) {
-    noeud* g = malloc(sizeof(noeud));
-    g->fils = NULL;
-    g->racine = g;
-    g->pere = NULL;
-    strcpy(g->nom, s);
-    g->est_dossier = b;
-    return g;
 }
 
 int main(void) {
@@ -72,6 +79,8 @@ int main(void) {
     racine->fils = g;
 
     ls(racine);
-
+    printf("------------\n");
+    mkdir(racine,"Nouveau dossier");
+    ls(racine);
     return 0;
 }
