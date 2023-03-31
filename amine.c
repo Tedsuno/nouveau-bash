@@ -107,26 +107,74 @@ else{
 }
 }
 
-//strcat est une fonction en C qui permet de concaténer deux chaînes de caractères en ajoutant la deuxième chaîne à la fin de la première.
 void pwd(noeud* courant){
-    noeud* c=courant;
-    char path[1000] = "/";
+    noeud* c = courant;
+    char path[1000] = "";
     char chaine[1000];
     char chaine2[99];
-    strcat(path, c->nom);
-    strcpy(chaine,path);
-    while(c->pere != NULL){
+    if (strlen(c->nom) > 0) {
+        strcat(path, "/");
+        strcat(path, c->nom);
+    }
+    strcpy(chaine, path);
+    while(c->pere != c->racine){
         c = c->pere;
-        strcpy(chaine2,chaine); // chaine = "/TD[1]"
-        strcpy(chaine, c->nom);
-        strcat(chaine, chaine2);
+        strcpy(chaine2, chaine); // chaine2 = /TD[1]
+        strcpy(chaine, "");      // chaine = "" 
+        if (strlen(c->nom) > 0) {
+            strcat(chaine, "/");
+            strcat(chaine, c->nom); // chaine = /anglais
+        }
+        strcat(chaine, chaine2); // chaine = /anglais/TD[1]
     }
     printf("%s\n", chaine);
 }
-
+bool appartient(noeud* courant, const char* chem){
+    liste_noeud* current=courant->fils;
+    if(current!=NULL){
+       while(current!=NULL){
+            if(strcmp(current->no->nom,capture(chem))==0){
+               return true;
+            }
+            current=current->succ;
+       }
+    }
+    return false;
+}
+noeud* getAppartient(noeud* courant, const char* chem){
+    liste_noeud* current=courant->fils;
+    if(current!=NULL){
+       while(current!=NULL){
+            if(strcmp(current->no->nom,capture(chem))==0){
+               return current->no;
+            }
+            current=current->succ;
+       }
+    }
+    return current->no;
+}
+noeud* cd_chem(noeud* courant, const char* chem){
+    noeud* res = courant;
+    char* chemin = capture(chem);
+    if (res->fils != NULL && chemin != NULL) {
+        char* token = strtok(chemin, "/");
+        do {
+            if (appartient(res, token)) {
+                res = getAppartient(res, token);
+                token = strtok(NULL, "/");
+            } else {
+                perror("No such file or directory");
+                break;
+            }
+        } while (token != NULL);
+        free(chemin);
+    } else {
+        perror("No such file or directory");
+    }
+    return res;
+}
 int main(void) {
-    noeud* racine = creer_noeud(true, "/", NULL);
-    //noeud* courant= racine;
+    noeud* racine = creer_noeud(true, "racine", NULL);
     noeud* dossier1 = creer_noeud(true, "Cours", NULL);
     noeud* dossier2 = creer_noeud(true, "anglais", NULL);
     liste_noeud* g = malloc(sizeof(liste_noeud));
@@ -146,15 +194,37 @@ int main(void) {
     dossier2->fils=filsDossier2;
 
 
-    ls(racine);
+
+
+
+    noeud* courant=racine;
+    printf("%s\n",courant->nom);
+    //ls(racine);
     //ls(dossier2);
     printf("------------\n");
+    courant=cd_chem(courant,"anglais/TD1");
+    printf("%s\n",courant->nom);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     //mkdir(racine,"Nouveau dossier");
-    touch(racine,"print");
-    ls(racine);
-    printf("------------\n");
+    //touch(racine,"print");
+    //ls(racine);
+    //printf("------------\n");
     //ls(dossier2);
-    pwd(dossier3);
+    //pwd(dossier3);
     free(g2);
     free(g);
     free(dossier3);
