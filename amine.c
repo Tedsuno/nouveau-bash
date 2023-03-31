@@ -173,6 +173,12 @@ noeud* cd_chem(noeud* courant, const char* chem){
     }
     return res;
 }
+noeud* cd(noeud* courant){
+    while(courant->pere != courant->racine){
+        courant=courant->pere;
+    }
+    return courant;
+}
 int main(void) {
     noeud* racine = creer_noeud(true, "racine", NULL);
     noeud* dossier1 = creer_noeud(true, "Cours", NULL);
@@ -193,10 +199,6 @@ int main(void) {
     filsDossier2->succ=NULL;
     dossier2->fils=filsDossier2;
 
-
-
-
-
     noeud* courant=racine;
     printf("%s\n",courant->nom);
     //ls(racine);
@@ -204,27 +206,17 @@ int main(void) {
     printf("------------\n");
     courant=cd_chem(courant,"anglais/TD1");
     printf("%s\n",courant->nom);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     //mkdir(racine,"Nouveau dossier");
     //touch(racine,"print");
     //ls(racine);
     //printf("------------\n");
     //ls(dossier2);
     //pwd(dossier3);
+    //printf("------------\n");
+    //noeud* test=dossier3;
+    //printf("%s\n",test->nom);
+    //test=cd(test);
+    //printf("%s\n",test->nom);
     free(g2);
     free(g);
     free(dossier3);
