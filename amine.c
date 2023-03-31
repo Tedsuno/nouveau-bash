@@ -69,7 +69,7 @@ if(strlen(capture(nom))>99 || strlen(capture(nom))<1){
 }
 for(int i=0; nom[i]!='\0'; i++){
 	if(!isalnum(nom[i])){
-		return true;
+		return false;
 	}
 }
 return true;
@@ -106,6 +106,23 @@ else{
 	perror("Le nom est invalide ou un fichier portant ce nom existe déjà dans ce dossier.");
 }
 }
+void pwd(noeud* courant){
+    noeud* c=courant;
+    char path[1000] = "";
+    char str[100] = "";
+    strcat(path, c->nom);
+    while(c->pere != NULL){
+        c = c->pere;
+        if (c->pere != NULL){
+            strcat(str, "/");
+        }
+        strcat(str, c->nom);
+        strcat(str, path);
+        strcpy(path, str);
+        memset(str, 0, sizeof(str)); // clear str for next iteration
+    }
+    printf("%s\n", path);
+}
 int main(void) {
     noeud* racine = creer_noeud(true, "/", NULL);
     //noeud* courant= racine;
@@ -119,19 +136,27 @@ int main(void) {
     g->succ = g2;
     racine->fils = g;
 
+    noeud* dossier3 = creer_noeud(true, "TD1", NULL);
+    dossier3->pere=dossier2;
+    dossier2->pere=racine;
+    liste_noeud* filsDossier2= malloc(sizeof(liste_noeud));
+    filsDossier2->no=dossier3;
+    filsDossier2->succ=NULL;
+    dossier2->fils=filsDossier2;
+
+
     ls(racine);
     //ls(dossier2);
     printf("------------\n");
     //mkdir(racine,"Nouveau dossier");
-    touch(racine,"amine.txt");
+    touch(racine,"print");
     ls(racine);
     printf("------------\n");
-    //mkdir(racine,"Nouveau dossier");
-    touch(racine,"amine.txt");
-    ls(racine);
     //ls(dossier2);
+    pwd(dossier3);
     free(g2);
     free(g);
+    free(dossier3);
     free(dossier2);
     free(dossier1);
     free(racine);
