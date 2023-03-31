@@ -80,7 +80,7 @@ int main(void) {
 
     ls(racine);
     printf("------------\n");
-    mkdir(racine,"Nouveau dossier");
+    mkdir(dossier2,"Nouveau dossier");
     ls(racine);
     return 0;
 }
