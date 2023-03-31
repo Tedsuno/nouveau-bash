@@ -179,6 +179,12 @@ noeud* cd(noeud* courant){
     }
     return courant;
 }
+
+noeud* cd_point(noeud* courant){
+    if(courant->pere==NULL) perror("No such file or directory");
+    if(courant->pere!=NULL) return courant->pere;
+}
+
 int main(void) {
     noeud* racine = creer_noeud(true, "racine", NULL);
     noeud* dossier1 = creer_noeud(true, "Cours", NULL);
