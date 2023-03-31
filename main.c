@@ -79,8 +79,10 @@ int main(void) {
     racine->fils = g;
 
     ls(racine);
+    //ls(dossier2);
     printf("------------\n");
-    mkdir(dossier2,"Nouveau dossier");
+    mkdir(racine,"Nouveau dossier");
     ls(racine);
+    //ls(dossier2);
     return 0;
 }
