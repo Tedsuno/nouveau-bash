@@ -137,6 +137,7 @@ void pwd(noeud* courant){
     }
     printf("%s\n", chaine);
 }
+
 bool appartient(noeud* courant, const char* chem){
     liste_noeud* current=courant->fils;
     if(current!=NULL){
@@ -165,6 +166,7 @@ noeud* getAppartient(noeud* courant, const char* chem){
     }
     return current->no;
 }
+
 noeud* cd_chem(noeud* courant, const char* chem){
     noeud* res = courant;
     char* chemin = capture(chem);
@@ -188,6 +190,8 @@ noeud* cd_chem(noeud* courant, const char* chem){
     }
     return res;
 }
+
+
 noeud* cd(noeud* courant){
     while(courant->pere != courant->racine){
         courant=courant->pere;
@@ -200,6 +204,35 @@ noeud* cd_point(noeud* courant){
     if(courant->pere!=NULL){ return courant->pere;}
     return NULL;
 }
+
+int nb_fils(noeud* courant) {
+    if(courant->fils==NULL) return 0;
+    int count=0;
+    liste_noeud* fils=courant->fils;
+    while (fils!=NULL) {
+        count++;
+        fils=fils->succ;
+    }
+      return count;
+}
+
+
+void print_arbre(noeud* courant) {
+    printf("Noeud %s (%s), %d fils : ", courant->nom, courant->est_dossier ? "D" : "F", nb_fils(courant));
+    if (courant->fils == NULL) {
+        printf("Aucun fils\n");
+        return;
+    }
+    puts("");
+    liste_noeud *fils=courant->fils;
+    while (fils!=NULL) {
+        printf("Noeud %s (%s), pere : %s, ", fils->no->nom, fils->no->est_dossier ? "D" : "F", courant->nom);
+        print_arbre(fils->no);
+        fils=fils->succ;
+    }
+}
+
+
 
 int main(void) {
     noeud* racine = creer_noeud(true, "racine", NULL);
@@ -235,6 +268,9 @@ int main(void) {
     printf("%s\n",courant->nom);
     printf("------------\n");
     pwd(courant);
+    printf("------------\n");
+    printf("------------\n");
+    print_arbre(racine);
     //mkdir(racine,"Nouveau dossier");
     //touch(racine,"print");
     //ls(racine);
