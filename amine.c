@@ -38,7 +38,8 @@ char* capture(const char* nom) {
     return result; // Retourner la chaîne de caractères
 }
 void mkdir(noeud* parent, const char *nom) {
-    noeud *newDir=creer_noeud(true,capture(nom),NULL);
+    char *n=capture(nom);
+    noeud *newDir=creer_noeud(true,n,NULL);
     newDir->pere=parent;
     if (parent->fils == NULL) { 
         parent->fils = malloc(sizeof(liste_noeud));
@@ -53,6 +54,7 @@ void mkdir(noeud* parent, const char *nom) {
         ptr->succ->no = newDir;
         ptr->succ->succ = NULL;
     }
+    free(n);
 }
 
 void ls(noeud* actuel) {
@@ -64,7 +66,8 @@ void ls(noeud* actuel) {
     }
 }
 bool estValide(const char *nom){
-if(strlen(capture(nom))>99 || strlen(capture(nom))<1){
+char *c=capture(nom);
+if(strlen(c)>99 || strlen(c)<1){
  return false;
 }
 for(int i=0; nom[i]!='\0'; i++){
@@ -72,21 +75,25 @@ for(int i=0; nom[i]!='\0'; i++){
 		return false;
 	}
 }
+free(c);
 return true;
 }
 bool existeDeja(noeud* courant,const char *nom){
 liste_noeud* liste=courant->fils;
+char *c=capture(nom);
 while(liste!=NULL){
-	if(strcmp(liste->no->nom,capture(nom))==0){
+	if(strcmp(liste->no->nom,c)==0){
 		return true;
 	}
     liste=liste->succ;
 }
+free(c);
 return false;
 }
 void touch(noeud* courant,const char *nom){
 if(estValide(nom) && !existeDeja(courant,nom)){
-noeud* newFic=creer_noeud(false,capture(nom),NULL);
+char *c=capture(nom);
+noeud* newFic=creer_noeud(false,c,NULL);
 if (courant->fils == NULL) { 
         courant->fils = malloc(sizeof(liste_noeud));
         courant->fils->no = newFic;
@@ -101,6 +108,7 @@ liste->succ=malloc(sizeof(liste_noeud));
 liste->succ->no=newFic;
 liste->succ->succ=NULL;
 }
+free(c);
 }
 else{
 	perror("Le nom est invalide ou un fichier portant ce nom existe déjà dans ce dossier.");
@@ -133,9 +141,11 @@ bool appartient(noeud* courant, const char* chem){
     liste_noeud* current=courant->fils;
     if(current!=NULL){
        while(current!=NULL){
-            if(strcmp(current->no->nom,capture(chem))==0){
+            char *c=capture(chem);
+            if(strcmp(current->no->nom,c)==0){
                return true;
             }
+            free(c);
             current=current->succ;
        }
     }
@@ -145,9 +155,11 @@ noeud* getAppartient(noeud* courant, const char* chem){
     liste_noeud* current=courant->fils;
     if(current!=NULL){
        while(current!=NULL){
-            if(strcmp(current->no->nom,capture(chem))==0){
+            char *c=capture(chem);
+            if(strcmp(current->no->nom,c)==0){
                return current->no;
             }
+            free(c);
             current=current->succ;
        }
     }
@@ -156,13 +168,16 @@ noeud* getAppartient(noeud* courant, const char* chem){
 noeud* cd_chem(noeud* courant, const char* chem){
     noeud* res = courant;
     char* chemin = capture(chem);
+    //if(!appartientAll(chem)){
+    //    return courant;
+    //}
     if (res->fils != NULL && chemin != NULL) {
         char* token = strtok(chemin, "/");
         do {
             if (appartient(res, token)) {
                 res = getAppartient(res, token);
                 token = strtok(NULL, "/");
-            } else {
+            } else {        
                 perror("No such file or directory");
                 break;
             }
@@ -211,11 +226,15 @@ int main(void) {
     //ls(racine);
     //ls(dossier2);
     printf("------------\n");
-    courant=cd_chem(courant,"anglais/TD1");
+    courant=cd_chem(courant,"TD1");
+    mkdir(courant,"aminetxt");
     printf("%s\n",courant->nom);
     printf("------------\n");
-    courant=cd_point(courant);
+    //courant=cd_point(courant);
+    courant=cd_chem(courant,"aminetxt");
     printf("%s\n",courant->nom);
+    printf("------------\n");
+    pwd(courant);
     //mkdir(racine,"Nouveau dossier");
     //touch(racine,"print");
     //ls(racine);
