@@ -234,6 +234,32 @@ void free_chem(noeud* courant){
     courant->fils = NULL;
 }
 /*---------------------------------------------------------------*/
+int nb_fils(noeud* courant) {
+    if(courant->fils==NULL) return 0;
+    int count=0;
+    liste_noeud* fils=courant->fils;
+    while (fils!=NULL) {
+        count++;
+        fils=fils->succ;
+    }
+      return count;
+}
+/*---------------------------------------------------------------*/
+void print_arbre(noeud* courant) {
+    printf("Noeud %s (%s), %d fils : ", courant->nom, courant->est_dossier ? "D" : "F", nb_fils(courant));
+    if (courant->fils == NULL) {
+        printf("Aucun fils\n");
+        return;
+    }
+    puts("");
+    liste_noeud *fils=courant->fils;
+    while (fils!=NULL) {
+        printf("Noeud %s (%s), pere : %s, ", fils->no->nom, fils->no->est_dossier ? "D" : "F", courant->nom);
+        print_arbre(fils->no);
+        fils=fils->succ;
+    }
+}
+/*---------------------------------------------------------------*/
 void rm(noeud* courant,const char* chem){
     noeud* toDelete = courant;
     char* chemin = capture(chem);
