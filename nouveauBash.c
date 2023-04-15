@@ -110,13 +110,56 @@ void ls(noeud* courant){
 	}
 }
 /*-------------------------------------------*/
+bool estDernier(noeud* courant,const char* chem){
+	char* nom=NULL;
+	char* chemin=capture(chem);
+	char* token = strtok(chemin, "/");
+        do {
+        	nom=token;
+            token = strtok(NULL, "/");
+        }
+    while (token != NULL);
+    if(strcmp(courant->nom,nom)==0){
+    	return true;
+    }
+    else{
+    	return false;
+    }
+}
+/*-------------------------------------------*/
+noeud* getDernier(noeud* courant,const char* chem){
+	noeud* res = courant;
+    char* chemin = capture(chem);
+    if (res->fils != NULL && chemin != NULL) {
+        char* token = strtok(chemin, "/");
+        do {
+            if (appartient(res, token)) {
+                res = getAppartient(res, token);
+                token = strtok(NULL, "/");
+            } else {
+                res=courant;
+                perror("No such file or directory");
+                break;
+            }
+        } while (token != NULL);
+        free(chemin);
+    } else {
+        perror("No such file or directory");
+    }
+    return res;
+}
+/*-------------------------------------------*/
 noeud* cd_chem(noeud* courant, const char* chem){
 	//Si c'est un chemin absolu
 	noeud* res=courant;
     char* c=capture(chem);
     if(c[0]=='/'){
        if(c[1]!='/'){
-       res = courant->racine;
+       	 res = courant->racine;
+       	 if(courant==getDernier(courant->racine,chem)) {
+	        perror("Vous etes déjà dans ce dossier");
+	        return courant;
+	     }
        char* chemin = capture(chem);
        if (res->fils != NULL && chemin != NULL) {
         char* token = strtok(chemin, "/");
@@ -233,6 +276,7 @@ void mkdir(noeud* parent, const char *nom) {
     }
 }
 /*-------------------------------------------*/
+
 void touch(noeud* courant,const char *nom){
 if(estValide(nom) && !existeDeja(courant,nom)){
 char *c=capture(nom);
@@ -269,6 +313,21 @@ int nb_fils(noeud* courant) {
       return count;
 }
 /*---------------------------------------------------------------*/
+void print_arbre(noeud* courant) {
+    printf("Noeud %s (%s), %d fils : ", courant->nom, courant->est_dossier ? "D" : "F", nb_fils(courant));
+    if (courant->fils == NULL) {
+        printf("Aucun fils\n");
+        return;
+    }
+    puts("");
+    liste_noeud *fils=courant->fils;
+    while (fils!=NULL) {
+        printf("Noeud %s (%s), pere : %s, ", fils->no->nom, fils->no->est_dossier ? "D" : "F", courant->nom);
+        print_arbre(fils->no);
+        fils=fils->succ;
+    }
+}
+/*-------------------------------------------*/
 void free_chem(noeud* courant){
     // Libérer et supprimer tous les fils de courant
     liste_noeud* fils_courant = courant->fils;
@@ -285,21 +344,22 @@ void free_chem(noeud* courant){
     // Réinitialiser la liste de fils du noeud courant
     courant->fils = NULL;
 }
-/*---------------------------------------------------------------*/
+/*-------------------------------------------*/
 void rm(noeud* courant,const char* chem){
     noeud* toDelete = courant;
-    char* token;
+
+    //Si c'est un chemin absolu    
+    char* c=capture(chem);
+    if(c[0]=='/'){
+       if(c[1]!='/'){
+       	 toDelete = courant->racine;
+       	 if(courant==getDernier(courant->racine,chem)) {
+	        perror("Vous etes déjà dans ce dossier");
+	        return;
+	     }
     char* chemin = capture(chem);
     if (toDelete->fils != NULL && chemin != NULL) {
-        if(chemin[0]=='/'){ 
-            int i;
-            for(i=1; chemin[i]!='\0'; i++){
-                chemin[i-1]=chemin[i];
-            }
-            chemin[i-1]='\0';
-            token=strtok(chemin, "/");
-        }else{
-         token = strtok(chemin, "/");}
+        char* token = strtok(chemin, "/");
         do {
             if (appartient(toDelete, token)) {
                 toDelete = getAppartient(toDelete, token);
@@ -331,21 +391,54 @@ void rm(noeud* courant,const char* chem){
         prev_fils = fils_de_pere;
         fils_de_pere = fils_de_pere->succ;
     }
-}
-/*---------------------------------------------------------------*/
-void print_arbre(noeud* courant) {
-    printf("Noeud %s (%s), %d fils : ", courant->nom, courant->est_dossier ? "D" : "F", nb_fils(courant));
-    if (courant->fils == NULL) {
-        printf("Aucun fils\n");
-        return;
     }
-    puts("");
-    liste_noeud *fils=courant->fils;
-    while (fils!=NULL) {
-        printf("Noeud %s (%s), pere : %s, ", fils->no->nom, fils->no->est_dossier ? "D" : "F", courant->nom);
-        print_arbre(fils->no);
-        fils=fils->succ;
+    else{
+     	perror("No such file or directory");
+      }
     }
+    //Si ce n'est pas un chemin absolu
+    else{
+    if(c[1]!='/'){
+    	char* chemin = capture(chem);
+    if (toDelete->fils != NULL && chemin != NULL) {
+        char* token = strtok(chemin, "/");
+        do {
+            if (appartient(toDelete, token)) {
+                toDelete = getAppartient(toDelete, token);
+                token = strtok(NULL, "/");
+            } else {
+                toDelete=courant;
+                perror("No such file or directory");
+                free(chemin);
+                return;
+            }
+        } while (token != NULL);
+        free(chemin);
+    } else {
+        perror("No such file or directory");
+    }
+    liste_noeud* fils_de_pere=toDelete->pere->fils;
+    free_chem(toDelete);
+    liste_noeud* prev_fils = NULL;
+    while(fils_de_pere != NULL){
+        if(fils_de_pere->no == toDelete){
+            if(prev_fils == NULL){ // toDelete est en tête de la liste
+                toDelete->pere->fils = fils_de_pere->succ;
+            } else { // toDelete est dans la liste, mais pas en tête
+                prev_fils->succ = fils_de_pere->succ;
+            }
+            free(fils_de_pere);
+            break;
+        }
+        prev_fils = fils_de_pere;
+        fils_de_pere = fils_de_pere->succ;
+    }
+    }
+    else{
+    	perror("No such file or directory");
+    }
+    }
+    free(c);
 }
 /*-------------------------------------------*/
 int main(void){
@@ -356,9 +449,12 @@ mkdir(racine,"TD2");
 mkdir(racine,"TD3");
 mkdir(racine,"TD4");
 mkdir(racine->fils->no,"anglais");
+mkdir(racine->fils->no->fils->no,"TP1");
 ls(courant);
-courant=cd_chem(courant,"TD1");
 courant=cd_chem(courant,"/TD1/anglais");
 printf("---------------\n");
+ls(courant);
+printf("---------------\n");
+rm(courant,"TP1");
 ls(courant);
 }
