@@ -610,6 +610,11 @@ void cp(noeud* courant,char* chemin_src, char* chemin_dest) {
     ajouter_fils(dest, copie_src);
 }
 /*--------------------------------------------------------*/
+void mv(noeud* courant,char* chem1, char* chem2){
+    cp(courant,chem1,chem2);
+    rm(courant,chem1);
+}
+/*--------------------------------------------------------*/
 int main(void){
 noeud* racine=creerRacine(NULL);
 noeud* courant=racine;
@@ -619,19 +624,30 @@ mkdir(racine,"TD3");
 mkdir(racine,"TD4");
 mkdir(racine->fils->no,"anglais");
 mkdir(racine->fils->no->fils->no,"TP1");
-courant=cd_chem(courant,"/TD1");
+//courant=cd_chem(courant,"/TD1");
 printf("TD1 :\n");
 ls(courant);
 printf("------------\n");
 printf("TD2 :\n");
-courant=cd_chem(courant,"/TD2");
+//courant=cd_chem(courant,"/TD2");
 ls(courant);
 printf("------------\n");
 printf("TD2 :\n");
-courant=cd_point(courant);
-printf("------------\n");
-cp(courant,"TD1/anglais","TD2");
+/*courant=cd_point(courant);
+courant=cd_chem(courant,"TD1");
+cp(courant,"anglais","/TD2");
 courant=cd_point(courant);
 courant=cd_chem(courant,"TD2");
+ls(courant);*/
+courant=cd_chem(courant,"TD1");
+mv(courant,"anglais","/TD2");
+courant=cd_point(courant);
+courant=cd_chem(courant,"TD2");
+ls(courant);
+courant=cd_chem(courant,"anglais");
+ls(courant);
+printf("------------\n");
+courant=cd_point(courant);
+courant=cd_point(courant);
 ls(courant);
 }
