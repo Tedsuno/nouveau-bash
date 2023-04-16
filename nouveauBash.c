@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
+#define MAX_NOM 256    // Définir la longueur maximale du nom d'un noeud à 256 caractères
+#define MAX_FILS 10    // Définir le nombre maximum de fils qu'un noeud peut avoir à 10
 /*-------------------------------------------*/
 struct noeud ;
 struct liste_noeud ;
@@ -441,6 +443,135 @@ void rm(noeud* courant,const char* chem){
     free(c);
 }
 /*-------------------------------------------*/
+// Fonction pour libérer la mémoire allouée pour un noeud et ses fils
+void free_noeud(noeud* n) {
+    if (n == NULL) {
+        return;
+    }
+
+    liste_noeud* fils = n->fils;
+    while (fils != NULL) {
+        liste_noeud* suivant = fils->succ;
+        free_noeud(fils->no);
+        free(fils);
+        fils = suivant;
+    }
+
+    free(n);
+}
+
+// Fonction pour rechercher un noeud à partir d'un chemin
+noeud* rechercher_noeud(noeud* c,char* chemin) {
+    if (chemin == NULL) {
+        return NULL;
+    }
+
+    // Rechercher le noeud à partir de la racine
+    noeud* courant = c->racine;
+    char* token = strtok(chemin, "/");
+    while (token != NULL) {
+        liste_noeud* fils = courant->fils;
+        while (fils != NULL) {
+            if (strcmp(fils->no->nom, token) == 0) {
+                courant = fils->no;
+                break;
+            }
+            fils = fils->succ;
+        }
+
+        if (fils == NULL) {
+            return NULL; // Noeud non trouvé
+        }
+
+        token = strtok(NULL, "/");
+    }
+
+    return courant;
+}
+// Fonction pour copier un noeud et ses fils
+noeud* copier_noeud(noeud* src) {
+    if (src == NULL) {
+        return NULL;
+    }
+
+    noeud* copie = (noeud*)malloc(sizeof(noeud));
+    copie->est_dossier = src->est_dossier;
+    strncpy(copie->nom, src->nom, 100);
+    copie->pere = src->pere;
+    copie->racine = src->racine;
+    copie->fils = NULL;
+
+    liste_noeud* src_fils = src->fils;
+    liste_noeud* copie_fils = NULL;
+    liste_noeud* prev_fils = NULL;
+
+    while (src_fils != NULL) {
+        copie_fils = (liste_noeud*)malloc(sizeof(liste_noeud));
+        copie_fils->no = copier_noeud(src_fils->no);
+        copie_fils->succ = NULL;
+
+        if (prev_fils == NULL) {
+            copie->fils = copie_fils;
+        } else {
+            prev_fils->succ = copie_fils;
+        }
+
+        prev_fils = copie_fils;
+        src_fils = src_fils->succ;
+    }
+
+    return copie;
+}
+
+// Fonction pour copier un noeud et ses fils et l'ajouter comme fils d'un autre noeud
+void ajouter_fils(noeud* parent, noeud* fils) {
+    if (parent == NULL || fils == NULL) {
+        return;
+    }
+
+    liste_noeud* nouvel_element = (liste_noeud*)malloc(sizeof(liste_noeud));
+    nouvel_element->no = copier_noeud(fils);
+    nouvel_element->succ = NULL;
+
+    liste_noeud* dernier_element = parent->fils;
+    if (dernier_element == NULL) {
+        parent->fils = nouvel_element;
+    } else {
+        while (dernier_element->succ != NULL) {
+            dernier_element = dernier_element->succ;
+        }
+        dernier_element->succ = nouvel_element;
+    }
+}
+
+// Fonction pour copier un noeud et ses fils et l'ajouter comme fils d'un autre noeud
+void cp(noeud* courant,char* chemin_src, char* chemin_dest) {
+    if (chemin_src == NULL || chemin_dest == NULL) {
+        return;
+    }
+
+    // Rechercher le noeud source
+    noeud* src = rechercher_noeud(courant, chemin_src);
+    if (src == NULL) {
+        printf("Erreur : Le chemin source n'existe pas.\n");
+        return;
+    }
+
+    // Copier le noeud source et ses fils
+    noeud* copie_src = copier_noeud(src);
+
+    // Rechercher le noeud destination
+    noeud* dest = rechercher_noeud(courant, chemin_dest);
+    if (dest == NULL) {
+        printf("Erreur : Le chemin destination n'existe pas.\n");
+        free_noeud(copie_src); // Libérer la mémoire allouée pour la copie du noeud source
+        return;
+    }
+
+    // Ajouter la copie du noeud source comme fils du noeud destination
+    ajouter_fils(dest, copie_src);
+}
+/*--------------------------------------------------------*/
 int main(void){
 noeud* racine=creerRacine(NULL);
 noeud* courant=racine;
@@ -450,11 +581,20 @@ mkdir(racine,"TD3");
 mkdir(racine,"TD4");
 mkdir(racine->fils->no,"anglais");
 mkdir(racine->fils->no->fils->no,"TP1");
+courant=cd_chem(courant,"/TD1");
+printf("TD1 :\n");
 ls(courant);
-courant=cd_chem(courant,"/TD1/anglais");
-printf("---------------\n");
+printf("------------\n");
+printf("TD2 :\n");
+courant=cd_chem(courant,"/TD2");
 ls(courant);
-printf("---------------\n");
-rm(courant,"TP1");
+printf("------------\n");
+printf("TD2 :\n");
+courant=cd_point(courant);
+courant=cd_chem(courant,"/TD1");
+cp(courant,"TD1","TD2");
+courant=cd_point(courant);
+courant=cd_chem(courant,"TD2");
+courant=cd_chem(courant,"TD1");
 ls(courant);
 }
