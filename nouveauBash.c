@@ -461,32 +461,70 @@ void free_noeud(noeud* n) {
 }
 
 // Fonction pour rechercher un noeud à partir d'un chemin
-noeud* rechercher_noeud(noeud* c,char* chemin) {
-    if (chemin == NULL) {
-        return NULL;
-    }
-
-    // Rechercher le noeud à partir de la racine
-    noeud* courant = c->racine;
-    char* token = strtok(chemin, "/");
-    while (token != NULL) {
-        liste_noeud* fils = courant->fils;
-        while (fils != NULL) {
-            if (strcmp(fils->no->nom, token) == 0) {
-                courant = fils->no;
+noeud* rechercher_noeud(noeud* courant,char* chem) {
+    //Si c'est un chemin absolu
+	noeud* res=courant;
+    char* c=capture(chem);
+    if(c[0]=='/'){
+       if(c[1]!='/'){
+       	 res = courant->racine;
+       	 if(courant==getDernier(courant->racine,chem)) {
+	        perror("Vous etes déjà dans ce dossier");
+	        return courant;
+	     }
+       char* chemin = capture(chem);
+       if (res->fils != NULL && chemin != NULL) {
+        char* token = strtok(chemin, "/");
+        do {
+            if (appartient(res, token)) {
+                res = getAppartient(res, token);
+                token = strtok(NULL, "/");
+            } else {
+                res=courant;
+                perror("No such file or directory");
                 break;
             }
-            fils = fils->succ;
-        }
-
-        if (fils == NULL) {
-            return NULL; // Noeud non trouvé
-        }
-
-        token = strtok(NULL, "/");
+         } while (token != NULL);
+         free(chemin);
+       } 
+       else {
+         perror("No such file or directory");
+       }
+      }
+      else{
+     	perror("No such file or directory");
+      }
     }
-
-    return courant;
+	/*+++++++++++++++++++++++++++++++++++++++*/
+	//Si ce n'est pas un chemin absolu
+    else{
+      if(c[1]!='/'){
+      res = courant;
+      char* chemin = capture(chem);
+      if (res->fils != NULL && chemin != NULL) {
+        char* token = strtok(chemin, "/");
+        do {
+            if (appartient(res, token)) {
+                res = getAppartient(res, token);
+                token = strtok(NULL, "/");
+            } else {
+                res=courant;
+                perror("No such file or directory");
+                break;
+            }
+        } while (token != NULL);
+        free(chemin);
+      } 
+      else {
+         perror("No such file or directory");
+      }
+     }
+     else{
+     	perror("No such file or directory");
+     }
+    }
+    free(c);
+    return res;
 }
 // Fonction pour copier un noeud et ses fils
 noeud* copier_noeud(noeud* src) {
@@ -591,10 +629,9 @@ ls(courant);
 printf("------------\n");
 printf("TD2 :\n");
 courant=cd_point(courant);
-courant=cd_chem(courant,"/TD1");
-cp(courant,"TD1","TD2");
+printf("------------\n");
+cp(courant,"TD1/anglais","TD2");
 courant=cd_point(courant);
 courant=cd_chem(courant,"TD2");
-courant=cd_chem(courant,"TD1");
 ls(courant);
 }
