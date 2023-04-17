@@ -155,7 +155,7 @@ noeud* cd_chem(noeud* courant, const char* chem){
 	//Si c'est un chemin absolu
 	noeud* res=courant;
     char* c=capture(chem);
-    if(c[0]=='/'){
+    if(c[0]=='/' && courant==courant->racine){
        if(c[1]!='/'){
        	 res = courant->racine;
        	 if(courant==getDernier(courant->racine,chem)) {
@@ -218,10 +218,7 @@ noeud* cd_chem(noeud* courant, const char* chem){
 }
 /*-------------------------------------------*/
 noeud* cd(noeud* courant){
-    while(courant->pere != courant->racine){
-        courant=courant->pere;
-    }
-    return courant;
+    return courant->racine;
 }
 /*-------------------------------------------*/
 noeud* cd_point(noeud* courant){
@@ -352,7 +349,7 @@ void rm(noeud* courant,const char* chem){
 
     //Si c'est un chemin absolu    
     char* c=capture(chem);
-    if(c[0]=='/'){
+    if(c[0]=='/' && courant==courant->racine){
        if(c[1]!='/'){
        	 toDelete = courant->racine;
        	 if(courant==getDernier(courant->racine,chem)) {
@@ -615,39 +612,90 @@ void mv(noeud* courant,char* chem1, char* chem2){
     rm(courant,chem1);
 }
 /*--------------------------------------------------------*/
-int main(void){
-noeud* racine=creerRacine(NULL);
-noeud* courant=racine;
-mkdir(racine,"TD1");
-mkdir(racine,"TD2");
-mkdir(racine,"TD3");
-mkdir(racine,"TD4");
-mkdir(racine->fils->no,"anglais");
-mkdir(racine->fils->no->fils->no,"TP1");
-//courant=cd_chem(courant,"/TD1");
-printf("TD1 :\n");
-ls(courant);
-printf("------------\n");
-printf("TD2 :\n");
-//courant=cd_chem(courant,"/TD2");
-ls(courant);
-printf("------------\n");
-printf("TD2 :\n");
-/*courant=cd_point(courant);
-courant=cd_chem(courant,"TD1");
-cp(courant,"anglais","/TD2");
-courant=cd_point(courant);
-courant=cd_chem(courant,"TD2");
-ls(courant);*/
-courant=cd_chem(courant,"TD1");
-mv(courant,"anglais","/TD2");
-courant=cd_point(courant);
-courant=cd_chem(courant,"TD2");
-ls(courant);
-courant=cd_chem(courant,"anglais");
-ls(courant);
-printf("------------\n");
-courant=cd_point(courant);
-courant=cd_point(courant);
-ls(courant);
+int main(int argc, char *argv[])
+{
+    noeud* racine=creerRacine(NULL);
+    noeud* courant=racine;
+    if (argc != 2) {
+        printf("Usage: %s fichier\n", argv[0]);
+        return 1;
+    }
+
+    //printf("Le nom du fichier est: %s\n", argv[1]);
+
+    // Le reste de votre programme ici
+   char ch[100];
+   char temp[100];  // variable temporaire
+   char *token[100];
+   char *token2;
+   char *token3[100];
+   FILE* flux = fopen(argv[1], "r");
+    if (flux == NULL) {
+    perror("Probleme ouverture de fichier");
+   } else {
+    int c = 0;
+    while (fgets(ch, 50, flux) != NULL) {
+        // copier la chaîne d'origine dans la variable temporaire
+        strcpy(temp, ch);
+
+        // extraire le premier jeton avec strtok()
+        token[c] = strtok(temp, " ");
+        token3[c] = temp;
+        int lentok=strlen(token[c]);
+        //printf("token 3 : %s: %d\n",token3[c],strlen(token3[c]));
+        /*if (lentok > 0 && token2[lentok] != '\0') {
+            puts("aoeujadzmdoj");
+        //token[lentok - 1] = '\0'; // supprimer l'espace en écrivant un caractère nul
+        } */
+        token2=token[c]; 
+        token2 = strchr(ch, ' '); 
+        if (token2 != NULL) {   
+        token2++;
+        int len=strlen(token2);
+        if (len > 0) {
+        token2[len - 1] = '\0'; // supprimer l'espace en écrivant un caractère nul
+        }        
+    }
+    if(strcmp(token[c],"mkdir")==0){
+            mkdir(courant,token2);
+         }
+    /*if(strcmp(token[c],"mv")==0){
+            mv(courant,token2);
+         }
+    if(strcmp(token[c],"cp")==0){
+            cp(courant,to);
+         }*/
+    
+    if(strcmp(token3[c],"ls")==0){
+            ls(courant);
+            puts("-------------");
+    }
+    if(strcmp(token3[c],"rm")==0){
+            rm(courant,token2);
+         }
+    if(strcmp(token3[c],"pwd")==0){
+            pwd(courant);
+         }
+    if(strcmp(token3[c],"touch")==0){
+            touch(courant,token2);
+         }
+    
+    if(strlen(token3[c])==3){
+    	if(strcmp(token3[c],"cd\n")==0) courant=cd(courant);
+        if(strcmp(token3[c],"ls\n")==0){
+        	ls(courant);
+        	puts("-------------");
+        }
+    }
+    if(strcmp(token3[c],"cd")==0){
+        if(strcmp(token2,"..")==0) courant=cd_point(courant);
+        else { courant=cd_chem(courant,token2); }
+    }
+    c++;  
+    }
+    int r = fclose(flux);
+    if (r != 0) {
+        perror("Probleme fermeture de fichier");
+    }
+    }
 }
