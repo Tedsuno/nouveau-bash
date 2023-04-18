@@ -205,10 +205,11 @@ noeud* cd_chem(noeud* courant, const char* chem){
 }
 /*---------------------------------------------------------------*/
 noeud* cd(noeud* courant){
-    while(courant->pere != courant->racine){
-        courant=courant->pere;
+    noeud* c=courant;
+    while(c != courant->racine){
+        c=c->pere;
     }
-    return courant;
+    return c;
 }
 /*---------------------------------------------------------------*/
 noeud* cd_point(noeud* courant){
