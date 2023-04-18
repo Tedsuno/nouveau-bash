@@ -658,13 +658,35 @@ int main(int argc, char *argv[])
     }
     if(strcmp(token[c],"mkdir")==0){
             mkdir(courant,token2);
-         }
-    /*if(strcmp(token[c],"mv")==0){
-            mv(courant,token2);
-         }
+    }
+    if(strcmp(token[c],"mv")==0){
+           char *str1 = NULL; // Première chaîne de caractères
+           char *str2 = NULL; // Deuxième chaîne de caractères
+           // Utilisation de la fonction strtok pour diviser la chaîne de caractères
+           char *token_bis = strtok(token2, " ");
+           if (token_bis != NULL) {
+              str1 = strdup(token_bis); // Copie de la première partie dans str1
+              token_bis = strtok(NULL, " ");
+              if (token != NULL) {
+              str2 = strdup(token_bis); // Copie de la deuxième partie dans str2
+              }
+           }
+           mv(courant,str1,str2);
+    }
     if(strcmp(token[c],"cp")==0){
-            cp(courant,to);
-         }*/
+    	   char *str1 = NULL; // Première chaîne de caractères
+           char *str2 = NULL; // Deuxième chaîne de caractères
+           // Utilisation de la fonction strtok pour diviser la chaîne de caractères
+           char *token_bis = strtok(token2, " ");
+           if (token_bis != NULL) {
+              str1 = strdup(token_bis); // Copie de la première partie dans str1
+              token_bis = strtok(NULL, " ");
+              if (token != NULL) {
+              str2 = strdup(token_bis); // Copie de la deuxième partie dans str2
+              }
+           }
+           cp(courant,str1,str2);
+    }
     
     if(strcmp(token3[c],"ls")==0){
             ls(courant);
