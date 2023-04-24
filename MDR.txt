@@ -1,0 +1,13 @@
+mkdir Cours
+mkdir Rev
+mkdir Av
+cd Av
+mkdir Amine
+cd
+ls
+cd Rev
+mv /Av/Amine /Cours
+cd Cours
+ls
+
+
