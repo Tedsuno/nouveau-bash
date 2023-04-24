@@ -38,8 +38,8 @@ noeud* creerNoeud(bool est_dos, const char* nom, noeud* pere,liste_noeud * fils,
        return n;
 }
 /*-------------------------------------------*/
-noeud* creerRacine(liste_noeud * fils){
-       noeud* r=creerNoeud(true,"",NULL,fils,NULL);
+noeud* creerRacine(){
+       noeud* r=creerNoeud(true,"",NULL,NULL,NULL);
        r->pere=r;
        r->racine=r;
        return r;
@@ -636,10 +636,11 @@ void mv(noeud* courant,char* chem1, char* chem2){
 }
 /*--------------------------------------------------------*/
 int main(int argc, char *argv[]){
-    noeud* racine=creerRacine(NULL);
+    noeud* racine=creerRacine();
     noeud* courant=racine;
     if (argc != 2) {
         printf("Usage: %s fichier\n", argv[0]);
+        free(racine);
         return 1;
     }
    char ch[100];
@@ -719,12 +720,21 @@ int main(int argc, char *argv[]){
         if(strcmp(token2,"..")==0) courant=cd_point(courant);
         else { courant=cd_chem(courant,token2); }
     }
+    else if(strcmp(token3[c],"cd")!=0 && strcmp(token3[c],"touch")!=0 && strcmp(token3[c],"pwd")!=0 && 
+            strcmp(token3[c],"rm")!=0 && strcmp(token3[c],"ls")!=0 && strcmp(token3[c],"cp")!=0
+            && strcmp(token3[c],"mv")!=0 && strcmp(token3[c],"mkdir")!=0 && strcmp(token3[c],"cd\n")!=0 && 
+            strcmp(token3[c],"ls\n")!=0){
+        printf("command not found : %s",token3[c]);
+        exit(EXIT_FAILURE); 
+    }
     c++;  
     }
     int r = fclose(flux);
     if (r != 0) {
         perror("Probleme fermeture de fichier");
     }
-    free_chem(racine);
     }
+    free_chem(racine);
+    free(racine);
+    return 0;
 }

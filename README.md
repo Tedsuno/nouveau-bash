@@ -1,1 +1,5 @@
-# Projet-L2-C
+`make`
+
+`.\bin\program.exe instruction.txt`
+
+to run the project
