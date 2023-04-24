@@ -3,8 +3,6 @@
 #include <stdbool.h>
 #include <string.h>
 #include <ctype.h>
-#define MAX_NOM 256    // Définir la longueur maximale du nom d'un noeud à 256 caractères
-#define MAX_FILS 10    // Définir le nombre maximum de fils qu'un noeud peut avoir à 10
 /*-------------------------------------------*/
 struct noeud ;
 struct liste_noeud ;
@@ -22,12 +20,12 @@ struct liste_noeud * succ ;
 typedef struct noeud noeud ;
 typedef struct liste_noeud liste_noeud ;
 /*-------------------------------------------*/
-char* capture(const char* nom) {
-    char* result = malloc(strlen(nom) + 1); // Allouer de la mémoire pour la chaîne de caractères de retour
-    if (result != NULL) { // Vérifier si l'allocation a réussi
-        strcpy(result, nom); // Copier la chaîne de caractères passée en paramètre dans la variable de retour
+char* capture(const char* nom){
+    char* result= malloc(strlen(nom)+1);
+    if(result!=NULL){
+        strcpy(result,nom);
     }
-    return result; // Retourner la chaîne de caractères
+    return result;
 }
 /*-------------------------------------------*/
 noeud* creerNoeud(bool est_dos, const char* nom, noeud* pere,liste_noeud * fils, noeud* racine){
@@ -141,12 +139,14 @@ noeud* getDernier(noeud* courant,const char* chem){
             } else {
                 res=courant;
                 perror("No such file or directory");
+                exit(EXIT_FAILURE);
                 break;
             }
         } while (token != NULL);
         free(chemin);
     } else {
         perror("No such file or directory");
+        exit(EXIT_FAILURE);
     }
     return res;
 }
@@ -159,8 +159,10 @@ noeud* cd_chem(noeud* courant, const char* chem){
        if(c[1]!='/'){
        	 res = courant->racine;
        	 if(courant==getDernier(courant->racine,chem)) {
+            free(c);
 	        perror("Vous etes déjà dans ce dossier");
 	        return courant;
+            exit(EXIT_FAILURE);
 	     }
        char* chemin = capture(chem);
        if (res->fils != NULL && chemin != NULL) {
@@ -172,17 +174,25 @@ noeud* cd_chem(noeud* courant, const char* chem){
             } else {
                 res=courant;
                 perror("No such file or directory");
+                free(chemin);
+                free(c);
+                exit(EXIT_FAILURE);
                 break;
             }
          } while (token != NULL);
          free(chemin);
        } 
        else {
+         free(chemin);
+         free(c);
          perror("No such file or directory");
+         exit(EXIT_FAILURE);
        }
       }
       else{
+        free(c);
      	perror("No such file or directory");
+        exit(EXIT_FAILURE);
       }
     }
 	/*+++++++++++++++++++++++++++++++++++++++*/
@@ -200,17 +210,25 @@ noeud* cd_chem(noeud* courant, const char* chem){
             } else {
                 res=courant;
                 perror("No such file or directory");
+                free(chemin);
+                free(c);
+                exit(EXIT_FAILURE);
                 break;
             }
         } while (token != NULL);
         free(chemin);
       } 
       else {
+         free(chemin);
+         free(c);
          perror("No such file or directory");
+         exit(EXIT_FAILURE);
       }
      }
      else{
+        free(c);
      	perror("No such file or directory");
+        exit(EXIT_FAILURE);
      }
     }
     free(c);
@@ -222,7 +240,7 @@ noeud* cd(noeud* courant){
 }
 /*-------------------------------------------*/
 noeud* cd_point(noeud* courant){
-    if(courant->pere==NULL){ perror("No such file or directory");}
+    if(courant->pere==NULL){ perror("No such file or directory"); exit(EXIT_FAILURE);}
     if(courant->pere!=NULL){ return courant->pere;}
     return NULL;
 }
@@ -239,13 +257,13 @@ void pwd(noeud* courant){
     strcpy(chaine, path);
     while(c->pere != c->racine){
         c = c->pere;
-        strcpy(chaine2, chaine); // chaine2 = /TD[1]
-        strcpy(chaine, "");      // chaine = "" 
+        strcpy(chaine2, chaine);
+        strcpy(chaine, "");
         if (strlen(c->nom) > 0) {
             strcat(chaine, "/");
-            strcat(chaine, c->nom); // chaine = /anglais
+            strcat(chaine, c->nom);
         }
-        strcat(chaine, chaine2); // chaine = /anglais/TD[1]
+        strcat(chaine, chaine2);
     }
     printf("%s\n", chaine);
 }
@@ -272,33 +290,34 @@ void mkdir(noeud* parent, const char *nom) {
     }
     else{
         perror("Ce dossier existe déjà!");
+        exit(EXIT_FAILURE);
     }
 }
 /*-------------------------------------------*/
-
-void touch(noeud* courant,const char *nom){
-if(estValide(nom) && !existeDeja(courant,nom)){
-char *c=capture(nom);
-noeud* newFic=creerNoeud(false,c,courant,NULL,courant->racine);
-if (courant->fils == NULL) { 
-        courant->fils = malloc(sizeof(liste_noeud));
-        courant->fils->no = newFic;
-        courant->fils->succ = NULL;
-}
-else{
-liste_noeud* liste=courant->fils;
-while(liste->succ!=NULL){
-	liste=liste->succ;
-}
-liste->succ=malloc(sizeof(liste_noeud));
-liste->succ->no=newFic;
-liste->succ->succ=NULL;
-}
-free(c);
-}
-else{
-	perror("Le nom est invalide ou un fichier portant ce nom existe déjà dans ce dossier.");
-}
+void touch(noeud* courant, const char* nom) {
+    if (estValide(nom) && !existeDeja(courant, nom)) {
+        char* c = capture(nom);
+        noeud* newFic = creerNoeud(false, c, courant, NULL, courant->racine);
+        if (courant->fils == NULL) {
+            courant->fils = malloc(sizeof(liste_noeud));
+            courant->fils->no = newFic;
+            courant->fils->succ = NULL;
+        }
+        else {
+            liste_noeud* liste = courant->fils;
+            while (liste->succ != NULL) {
+                liste = liste->succ;
+            }
+            liste->succ = malloc(sizeof(liste_noeud));
+            liste->succ->no = newFic;
+            liste->succ->succ = NULL;
+        }
+        free(c);
+    }
+    else {
+        perror("Le nom est invalide ou un fichier portant ce nom existe déjà dans ce dossier.");
+        exit(EXIT_FAILURE);
+    }
 }
 /*---------------------------------------------------------------*/
 int nb_fils(noeud* courant) {
@@ -328,19 +347,14 @@ void print_arbre(noeud* courant) {
 }
 /*-------------------------------------------*/
 void free_chem(noeud* courant){
-    // Libérer et supprimer tous les fils de courant
     liste_noeud* fils_courant = courant->fils;
     while (fils_courant != NULL) {
         noeud* fils = fils_courant->no;
-        // Appeler récursivement la fonction pour libérer et supprimer les sous-arbres des fils
         free_chem(fils);
-        // Libérer le noeud fils et sa liste de fils
         free(fils->fils);
         free(fils);
-        // Passer au fils suivant
         fils_courant = fils_courant->succ;
     }
-    // Réinitialiser la liste de fils du noeud courant
     courant->fils = NULL;
 }
 /*-------------------------------------------*/
@@ -354,7 +368,8 @@ void rm(noeud* courant,const char* chem){
        	 toDelete = courant->racine;
        	 if(courant==getDernier(courant->racine,chem)) {
 	        perror("Vous etes déjà dans ce dossier");
-	        return;
+            free(c);
+	        exit(EXIT_FAILURE);
 	     }
     char* chemin = capture(chem);
     if (toDelete->fils != NULL && chemin != NULL) {
@@ -367,21 +382,25 @@ void rm(noeud* courant,const char* chem){
                 toDelete=courant;
                 perror("No such file or directory");
                 free(chemin);
-                return;
+                free(c);
+                exit(EXIT_FAILURE);
             }
         } while (token != NULL);
         free(chemin);
     } else {
+        free(chemin);
+        free(c);
         perror("No such file or directory");
+        exit(EXIT_FAILURE);
     }
     liste_noeud* fils_de_pere=toDelete->pere->fils;
     free_chem(toDelete);
     liste_noeud* prev_fils = NULL;
     while(fils_de_pere != NULL){
         if(fils_de_pere->no == toDelete){
-            if(prev_fils == NULL){ // toDelete est en tête de la liste
+            if(prev_fils == NULL){
                 toDelete->pere->fils = fils_de_pere->succ;
-            } else { // toDelete est dans la liste, mais pas en tête
+            } else {
                 prev_fils->succ = fils_de_pere->succ;
             }
             free(fils_de_pere);
@@ -392,7 +411,9 @@ void rm(noeud* courant,const char* chem){
     }
     }
     else{
+        free(c);
      	perror("No such file or directory");
+        exit(EXIT_FAILURE);
       }
     }
     //Si ce n'est pas un chemin absolu
@@ -409,21 +430,22 @@ void rm(noeud* courant,const char* chem){
                 toDelete=courant;
                 perror("No such file or directory");
                 free(chemin);
-                return;
+                exit(EXIT_FAILURE);
             }
         } while (token != NULL);
         free(chemin);
     } else {
         perror("No such file or directory");
+        exit(EXIT_FAILURE);
     }
     liste_noeud* fils_de_pere=toDelete->pere->fils;
     free_chem(toDelete);
     liste_noeud* prev_fils = NULL;
     while(fils_de_pere != NULL){
         if(fils_de_pere->no == toDelete){
-            if(prev_fils == NULL){ // toDelete est en tête de la liste
+            if(prev_fils == NULL){
                 toDelete->pere->fils = fils_de_pere->succ;
-            } else { // toDelete est dans la liste, mais pas en tête
+            } else {
                 prev_fils->succ = fils_de_pere->succ;
             }
             free(fils_de_pere);
@@ -435,17 +457,16 @@ void rm(noeud* courant,const char* chem){
     }
     else{
     	perror("No such file or directory");
+        exit(EXIT_FAILURE);
     }
     }
     free(c);
 }
 /*-------------------------------------------*/
-// Fonction pour libérer la mémoire allouée pour un noeud et ses fils
 void free_noeud(noeud* n) {
     if (n == NULL) {
         return;
     }
-
     liste_noeud* fils = n->fils;
     while (fils != NULL) {
         liste_noeud* suivant = fils->succ;
@@ -453,22 +474,22 @@ void free_noeud(noeud* n) {
         free(fils);
         fils = suivant;
     }
-
     free(n);
 }
-
-// Fonction pour rechercher un noeud à partir d'un chemin
+/*-------------------------------------------*/
 noeud* rechercher_noeud(noeud* courant,char* chem) {
     //Si c'est un chemin absolu
-	noeud* res=courant;
+    noeud* res=courant;
     char* c=capture(chem);
-    if(c[0]=='/'){
+    if(c[0]=='/' && courant==courant->racine){
        if(c[1]!='/'){
-       	 res = courant->racine;
-       	 if(courant==getDernier(courant->racine,chem)) {
-	        perror("Vous etes déjà dans ce dossier");
-	        return courant;
-	     }
+         res = courant->racine;
+         if(courant==getDernier(courant->racine,chem)) {
+            free(c);
+            perror("Vous etes déjà dans ce dossier");
+            return courant;
+            exit(EXIT_FAILURE);
+         }
        char* chemin = capture(chem);
        if (res->fils != NULL && chemin != NULL) {
         char* token = strtok(chemin, "/");
@@ -479,21 +500,29 @@ noeud* rechercher_noeud(noeud* courant,char* chem) {
             } else {
                 res=courant;
                 perror("No such file or directory");
+                free(chemin);
+                free(c);
+                exit(EXIT_FAILURE);
                 break;
             }
          } while (token != NULL);
          free(chemin);
        } 
        else {
+         free(chemin);
+         free(c);
          perror("No such file or directory");
+         exit(EXIT_FAILURE);
        }
       }
       else{
-     	perror("No such file or directory");
+        free(c);
+        perror("No such file or directory");
+        exit(EXIT_FAILURE);
       }
     }
-	/*+++++++++++++++++++++++++++++++++++++++*/
-	//Si ce n'est pas un chemin absolu
+    /*+++++++++++++++++++++++++++++++++++++++*/
+    //Si ce n'est pas un chemin absolu
     else{
       if(c[1]!='/'){
       res = courant;
@@ -507,67 +536,69 @@ noeud* rechercher_noeud(noeud* courant,char* chem) {
             } else {
                 res=courant;
                 perror("No such file or directory");
+                free(chemin);
+                free(c);
+                exit(EXIT_FAILURE);
                 break;
             }
         } while (token != NULL);
         free(chemin);
       } 
       else {
+         free(chemin);
+         free(c);
          perror("No such file or directory");
+         exit(EXIT_FAILURE);
       }
      }
      else{
-     	perror("No such file or directory");
+        free(c);
+        perror("No such file or directory");
+        exit(EXIT_FAILURE);
      }
     }
     free(c);
     return res;
 }
-// Fonction pour copier un noeud et ses fils
+/*-------------------------------------------*/
 noeud* copier_noeud(noeud* src) {
     if (src == NULL) {
         return NULL;
+        exit(EXIT_FAILURE);
     }
-
     noeud* copie = (noeud*)malloc(sizeof(noeud));
     copie->est_dossier = src->est_dossier;
     strncpy(copie->nom, src->nom, 100);
     copie->pere = src->pere;
     copie->racine = src->racine;
     copie->fils = NULL;
-
     liste_noeud* src_fils = src->fils;
     liste_noeud* copie_fils = NULL;
     liste_noeud* prev_fils = NULL;
-
     while (src_fils != NULL) {
         copie_fils = (liste_noeud*)malloc(sizeof(liste_noeud));
         copie_fils->no = copier_noeud(src_fils->no);
         copie_fils->succ = NULL;
-
         if (prev_fils == NULL) {
             copie->fils = copie_fils;
         } else {
             prev_fils->succ = copie_fils;
         }
-
         prev_fils = copie_fils;
         src_fils = src_fils->succ;
     }
 
     return copie;
 }
-
-// Fonction pour copier un noeud et ses fils et l'ajouter comme fils d'un autre noeud
+/*-------------------------------------------*/
 void ajouter_fils(noeud* parent, noeud* fils) {
     if (parent == NULL || fils == NULL) {
         return;
+        exit(EXIT_FAILURE);
     }
-
     liste_noeud* nouvel_element = (liste_noeud*)malloc(sizeof(liste_noeud));
     nouvel_element->no = copier_noeud(fils);
     nouvel_element->succ = NULL;
-
     liste_noeud* dernier_element = parent->fils;
     if (dernier_element == NULL) {
         parent->fils = nouvel_element;
@@ -578,32 +609,24 @@ void ajouter_fils(noeud* parent, noeud* fils) {
         dernier_element->succ = nouvel_element;
     }
 }
-
-// Fonction pour copier un noeud et ses fils et l'ajouter comme fils d'un autre noeud
+/*-------------------------------------------*/
 void cp(noeud* courant,char* chemin_src, char* chemin_dest) {
     if (chemin_src == NULL || chemin_dest == NULL) {
         return;
+        exit(EXIT_FAILURE);
     }
-
-    // Rechercher le noeud source
     noeud* src = rechercher_noeud(courant, chemin_src);
     if (src == NULL) {
         printf("Erreur : Le chemin source n'existe pas.\n");
-        return;
+        exit(EXIT_FAILURE);
     }
-
-    // Copier le noeud source et ses fils
     noeud* copie_src = copier_noeud(src);
-
-    // Rechercher le noeud destination
     noeud* dest = rechercher_noeud(courant, chemin_dest);
     if (dest == NULL) {
         printf("Erreur : Le chemin destination n'existe pas.\n");
-        free_noeud(copie_src); // Libérer la mémoire allouée pour la copie du noeud source
-        return;
+        free_noeud(copie_src);
+        exit(EXIT_FAILURE);
     }
-
-    // Ajouter la copie du noeud source comme fils du noeud destination
     ajouter_fils(dest, copie_src);
 }
 /*--------------------------------------------------------*/
@@ -612,20 +635,15 @@ void mv(noeud* courant,char* chem1, char* chem2){
     rm(courant,chem1);
 }
 /*--------------------------------------------------------*/
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
     noeud* racine=creerRacine(NULL);
     noeud* courant=racine;
     if (argc != 2) {
         printf("Usage: %s fichier\n", argv[0]);
         return 1;
     }
-
-    //printf("Le nom du fichier est: %s\n", argv[1]);
-
-    // Le reste de votre programme ici
    char ch[100];
-   char temp[100];  // variable temporaire
+   char temp[100];
    char *token[100];
    char *token2;
    char *token3[100];
@@ -635,73 +653,61 @@ int main(int argc, char *argv[])
    } else {
     int c = 0;
     while (fgets(ch, 50, flux) != NULL) {
-        // copier la chaîne d'origine dans la variable temporaire
         strcpy(temp, ch);
-
-        // extraire le premier jeton avec strtok()
         token[c] = strtok(temp, " ");
         token3[c] = temp;
         int lentok=strlen(token[c]);
-        //printf("token 3 : %s: %d\n",token3[c],strlen(token3[c]));
-        /*if (lentok > 0 && token2[lentok] != '\0') {
-            puts("aoeujadzmdoj");
-        //token[lentok - 1] = '\0'; // supprimer l'espace en écrivant un caractère nul
-        } */
         token2=token[c]; 
         token2 = strchr(ch, ' '); 
         if (token2 != NULL) {   
         token2++;
         int len=strlen(token2);
         if (len > 0) {
-        token2[len - 1] = '\0'; // supprimer l'espace en écrivant un caractère nul
+        token2[len - 1] = '\0';
         }        
     }
     if(strcmp(token[c],"mkdir")==0){
             mkdir(courant,token2);
     }
     if(strcmp(token[c],"mv")==0){
-           char *str1 = NULL; // Première chaîne de caractères
-           char *str2 = NULL; // Deuxième chaîne de caractères
-           // Utilisation de la fonction strtok pour diviser la chaîne de caractères
+           char *str1 = NULL;
+           char *str2 = NULL;
            char *token_bis = strtok(token2, " ");
            if (token_bis != NULL) {
-              str1 = strdup(token_bis); // Copie de la première partie dans str1
+              str1 = strdup(token_bis);
               token_bis = strtok(NULL, " ");
               if (token != NULL) {
-              str2 = strdup(token_bis); // Copie de la deuxième partie dans str2
+              str2 = strdup(token_bis);
               }
            }
            mv(courant,str1,str2);
     }
     if(strcmp(token[c],"cp")==0){
-    	   char *str1 = NULL; // Première chaîne de caractères
-           char *str2 = NULL; // Deuxième chaîne de caractères
-           // Utilisation de la fonction strtok pour diviser la chaîne de caractères
+    	   char *str1 = NULL;
+           char *str2 = NULL;
            char *token_bis = strtok(token2, " ");
            if (token_bis != NULL) {
-              str1 = strdup(token_bis); // Copie de la première partie dans str1
+              str1 = strdup(token_bis);
               token_bis = strtok(NULL, " ");
               if (token != NULL) {
-              str2 = strdup(token_bis); // Copie de la deuxième partie dans str2
+              str2 = strdup(token_bis);
               }
            }
            cp(courant,str1,str2);
-    }
-    
+    }    
     if(strcmp(token3[c],"ls")==0){
             ls(courant);
             puts("-------------");
     }
     if(strcmp(token3[c],"rm")==0){
             rm(courant,token2);
-         }
+   }
     if(strcmp(token3[c],"pwd")==0){
             pwd(courant);
-         }
+    }
     if(strcmp(token3[c],"touch")==0){
             touch(courant,token2);
-         }
-    
+    }    
     if(strlen(token3[c])==3){
     	if(strcmp(token3[c],"cd\n")==0) courant=cd(courant);
         if(strcmp(token3[c],"ls\n")==0){
@@ -719,5 +725,6 @@ int main(int argc, char *argv[])
     if (r != 0) {
         perror("Probleme fermeture de fichier");
     }
+    free_chem(racine);
     }
 }
