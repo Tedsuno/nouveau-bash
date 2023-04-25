@@ -655,25 +655,25 @@ int main(int argc, char *argv[]){
     int c = 0;
     while (fgets(ch, 50, flux) != NULL) {
         strcpy(temp, ch);
-        token[c] = strtok(temp, " ");
-        token3[c] = temp;
-        int lentok=strlen(token[c]);
-        token2=token[c]; 
-        token2 = strchr(ch, ' '); 
+        token[c] = strtok(temp, " ");  //On prend le nom de la commance dans token[c]
+        token3[c] = temp;              //On copie dans token3[c] la chaine de caractère entière de tout ce qu'il a écrit
+        int lentok=strlen(token[c]);   //Taille du nom de la commande
+        token2=token[c];               //token2 est un pointeur qui va pointer sur l'adresse token[c]
+        token2 = strchr(ch, ' ');      //token2 pointe maintenant vers l'espace juste après le nom de la commande
         if (token2 != NULL) {   
-        token2++;
-        int len=strlen(token2);
+        token2++;                      //On avance d'une case pour prendre la chaîne de caractère après la commande sans l'espace
+        int len=strlen(token2);        //Taille de la chaîne de caractère 
         if (len > 0) {
-        token2[len - 1] = '\0';
-        }        
+        token2[len - 1] = '\0';        //On coupe l'espace à la fin de la chaîne de caractère
+        }                              //token2 vaut donc toute la chaîne de caractère après la commande sans espace inutile
     }
-    if(strcmp(token[c],"mkdir")==0){
+    if(strcmp(token[c],"mkdir")==0){  //On compare donc token[c] avec de potentielle nom de commande, si c'est égales on lance la commande
             mkdir(courant,token2);
     }
     if(strcmp(token[c],"mv")==0){
            char *str1 = NULL;
            char *str2 = NULL;
-           char *token_bis = strtok(token2, " ");
+           char *token_bis = strtok(token2, " "); //Ici on coupe token2 en deux car il y'a deux chemins, il faut donc les capturer
            if (token_bis != NULL) {
               str1 = strdup(token_bis);
               token_bis = strtok(NULL, " ");
