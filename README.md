@@ -6,6 +6,8 @@ Tout les fonctionnalités demandées ont été faites.
 
 Pour lancer le projet tapez ces deux commandes dans le terminal :
 
+`make clean`
+
 `make`
 
 `./bin/program.exe MDR.txt`
