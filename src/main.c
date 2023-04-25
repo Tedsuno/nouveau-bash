@@ -28,7 +28,6 @@ int main(int argc, char *argv[]){
         strcpy(temp, ch);
         token[c] = strtok(temp, " ");
         token3[c] = temp;
-        int lentok=strlen(token[c]);
         token2=token[c]; 
         token2 = strchr(ch, ' '); 
         if (token2 != NULL) {   
@@ -48,9 +47,7 @@ int main(int argc, char *argv[]){
            if (token_bis != NULL) {
               str1 = strdup(token_bis);
               token_bis = strtok(NULL, " ");
-              if (token != NULL) {
               str2 = strdup(token_bis);
-              }
            }
            mv(courant,str1,str2);
     }
@@ -61,9 +58,7 @@ int main(int argc, char *argv[]){
            if (token_bis != NULL) {
               str1 = strdup(token_bis);
               token_bis = strtok(NULL, " ");
-              if (token != NULL) {
               str2 = strdup(token_bis);
-              }
            }
            cp(courant,str1,str2);
     }    
