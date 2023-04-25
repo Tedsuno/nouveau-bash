@@ -8,4 +8,4 @@ Pour lancer le projet tapez ces deux commandes dans le terminal :
 
 `make`
 
-`./bin/program.exe instruction.txt`
+`./bin/program.exe MDR.txt`
