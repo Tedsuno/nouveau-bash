@@ -2,5 +2,18 @@ mkdir Cours
 mkdir Rev
 mkdir Av
 ls
+cd Cours
+mkdir Amine
+ls
+cd ..
+cd Rev
+ls
+cd ..
+mv Cours/Amine Rev
+cd Rev
+ls
+cd ..
+cd Cours
+ls
 
 

@@ -86,11 +86,11 @@ int main(int argc, char *argv[]){
         if(strcmp(token2,"..")==0) courant=cd_point(courant);
         else { courant=cd_chem(courant,token2); }
     }
-    else if(strcmp(token3[c],"cd")!=0 && strcmp(token3[c],"touch")!=0 && strcmp(token3[c],"pwd")!=0 && 
+    else if((strcmp(token3[c],"\n")!=0 && strcmp(token3[c],"cd")!=0 && strcmp(token3[c],"touch")!=0 && strcmp(token3[c],"pwd")!=0 && 
             strcmp(token3[c],"rm")!=0 && strcmp(token3[c],"ls")!=0 && strcmp(token3[c],"cp")!=0
             && strcmp(token3[c],"mv")!=0 && strcmp(token3[c],"mkdir")!=0 && strcmp(token3[c],"cd\n")!=0 && 
-            strcmp(token3[c],"ls\n")!=0){
-        printf("command not found : %s",token3[c]);
+            strcmp(token3[c],"ls\n")!=0)){
+        printf("command not found :%s",token3[c]);
         exit(EXIT_FAILURE); 
     }
     c++;  
