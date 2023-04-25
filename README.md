@@ -1,5 +1,11 @@
+Membres du groupe :
+-Amine Sekkat (22115166)
+-Ayoub Lamloum (22118262)
+
+Tout les fonctionnalités demandées ont été faites.
+
+Pour lancer le projet tapez ces deux commandes dans le terminal :
+
 `make`
 
-`.\bin\program.exe instruction.txt`
-
-to run the project
+`./bin/program.exe instruction.txt`
