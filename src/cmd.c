@@ -20,12 +20,12 @@ noeud* cd_chem(noeud* courant, const char* chem){
     if(c[0]=='/' && courant==courant->racine){
        if(c[1]!='/'){
          res = courant->racine;
-         if(courant==getDernier(courant->racine,chem)) {
+         /*if(courant==getDernier(courant->racine,chem)) {
             free(c);
             perror("Vous etes déjà dans ce dossier");
             return courant;
             exit(EXIT_FAILURE);
-         }
+         }*/
        char* chemin = capture(chem);
        if (res->fils != NULL && chemin != NULL) {
         char* token = strtok(chemin, "/");
@@ -112,21 +112,31 @@ void pwd(noeud* courant){
     char path[1000] = "";
     char chaine[1000];
     char chaine2[99];
+    
+    if(c == c->racine){
+        puts("/");
+        return;
+    }
+    
     if (strlen(c->nom) > 0) {
         strcat(path, "/");
         strcat(path, c->nom);
     }
+    
     strcpy(chaine, path);
+    
     while(c->pere != c->racine){
         c = c->pere;
         strcpy(chaine2, chaine);
         strcpy(chaine, "");
+        
         if (strlen(c->nom) > 0) {
             strcat(chaine, "/");
             strcat(chaine, c->nom);
         }
         strcat(chaine, chaine2);
     }
+    
     printf("%s\n", chaine);
 }
 /*---------------------------------------------------------------*/
@@ -190,11 +200,11 @@ void rm(noeud* courant,const char* chem){
     if(c[0]=='/' && courant==courant->racine){
        if(c[1]!='/'){
          toDelete = courant->racine;
-         if(courant==getDernier(courant->racine,chem)) {
+         /*if(courant==getDernier(courant->racine,chem)) {
             perror("Vous etes déjà dans ce dossier");
             free(c);
             exit(EXIT_FAILURE);
-         }
+         }*/
     char* chemin = capture(chem);
     if (toDelete->fils != NULL && chemin != NULL) {
         char* token = strtok(chemin, "/");
@@ -292,19 +302,28 @@ void cp(noeud* courant,char* chemin_src, char* chemin_dest) {
         return;
         exit(EXIT_FAILURE);
     }
-    noeud* src = rechercher_noeud(courant, chemin_src);
+    noeud* src = rechercher_noeud(courant, chemin_src); //se place au dernier noeud du chemin source
     if (src == NULL) {
         printf("Erreur : Le chemin source n'existe pas.\n");
         exit(EXIT_FAILURE);
     }
-    noeud* copie_src = copier_noeud(src);
-    noeud* dest = rechercher_noeud(courant, chemin_dest);
+    noeud* copie_src = copier_noeud(src); //copie tout les fils du dernier noeud source
+    char* py=chemin_sans_dernier(chemin_dest);
+    noeud* dest = rechercher_noeud(courant, py); //se place à l'avant dernier noeud du chemin destination
     if (dest == NULL) {
         printf("Erreur : Le chemin destination n'existe pas.\n");
         free_noeud(copie_src);
         exit(EXIT_FAILURE);
     }
-    ajouter_fils(dest, copie_src);
+    char* ky=chemin_dernier(chemin_dest);
+    if(!appartient(dest,ky)){
+    mkdir(dest,ky);
+    dest=cd_chem(dest,ky);
+    ajouter_fils(dest, copie_src->fils);
+    }else{
+    dest=cd_chem(dest,ky);
+    ajouter_fils(dest, copie_src->fils);
+    }
 }
 /*--------------------------------------------------------*/
 void mv(noeud* courant,char* chem1, char* chem2){

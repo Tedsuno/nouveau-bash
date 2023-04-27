@@ -24,20 +24,20 @@ noeud* creerRacine(){
        return r;
 }
 /*---------------------------------------------------------------*/
-bool existeDeja(noeud* courant,const char *nom){
+bool existeDeja(noeud* courant,const char *nom){ //fonction permettant de faire la meme chose que appartient 
 liste_noeud* liste=courant->fils;
 char *c=capture(nom);
 while(liste!=NULL){
-	if(strcmp(liste->no->nom,c)==0){
-		return true;
-	}
+    if(strcmp(liste->no->nom,c)==0){
+        return true;
+    }
     liste=liste->succ;
 }
 free(c);
 return false;
 }
 /*---------------------------------------------------------------*/
-bool appartient(noeud* courant, const char* chem){
+bool appartient(noeud* courant, const char* chem){ //fonction servant à savoir si un noeud est dans la liste des fils par rapport à un bout de chemin
     liste_noeud* current=courant->fils;
     if(current!=NULL){
        while(current!=NULL){
@@ -52,7 +52,7 @@ bool appartient(noeud* courant, const char* chem){
     return false;
 }
 /*---------------------------------------------------------------*/
-noeud* getAppartient(noeud* courant, const char* chem){
+noeud* getAppartient(noeud* courant, const char* chem){ //pareil que appartient sauf qu'il renvoie ce noeud s'il existe
     liste_noeud* current=courant->fils;
     if(current!=NULL){
        while(current!=NULL){
@@ -65,43 +65,44 @@ noeud* getAppartient(noeud* courant, const char* chem){
        }
     }
     return current->no;
-}/*-------------------------------------------*/
-bool estDernier(noeud* courant,const char* chem){
-	char* nom=NULL;
-	char* chemin=capture(chem);
-	char* token = strtok(chemin, "/");
+}
+/*-------------------------------------------*/
+bool estDernier(noeud* courant,const char* chem){ //fonction servant à savoir si le dernier bout de chemin est égale au noeud courant
+    char* nom=NULL;
+    char* chemin=capture(chem);
+    char* token = strtok(chemin, "/");
         do {
-        	nom=token;
+            nom=token;
             token = strtok(NULL, "/");
         }
     while (token != NULL);
     if(strcmp(courant->nom,nom)==0){
-    	return true;
+        return true;
     }
     else{
-    	return false;
+        return false;
     }
 }
 /*-------------------------------------------*/
-noeud* getDernier(noeud* courant,const char* chem){
-	noeud* res = courant;
+noeud* getDernier(noeud* courant,const char* chem){ //fonction servant à aller jusqu'au dernier noeud du chemin s'il existe et le renvoie
+    noeud* res = courant;
     char* chemin = capture(chem);
-    if (res->fils != NULL && chemin != NULL) {
-        char* token = strtok(chemin, "/");
+    if (res->fils != NULL && chemin != NULL) { //si le noeud courant à des fils et que le chemin n'est pas nul
+        char* token = strtok(chemin, "/");     //coupe le chemin quand il rencontre un '/'
         do {
-            if (appartient(res, token)) {
-                res = getAppartient(res, token);
-                token = strtok(NULL, "/");
-            } else {
-                res=courant;
-                perror("No such file or directory");
+            if (appartient(res, token)) {      //si dans la liste des fils du noeud courant il y'a le bout de chemin coupé par '/'
+                res = getAppartient(res, token); //alors le noeud courant est maintenant égale au noeud du bout de chemin recherché
+                token = strtok(NULL, "/");       // et on recoupe le chemin au prochain '/' pour prendre la suite du chemin
+            } else { 
+                res=courant;                    //si dans le noeud courant il n'y a pas le bout de chemin dans ses fils, !erreur!
+                perror("No such file or directory1111111");
                 exit(EXIT_FAILURE);
                 break;
             }
-        } while (token != NULL);
+        } while (token != NULL);                //on fait cette manipulation jusqu'a la fin du chemin
         free(chemin);
     } else {
-        perror("No such file or directory");
+        perror("No such file or directory22222");   //si pas de fils ou chemin null, !erreur!
         exit(EXIT_FAILURE);
     }
     return res;
@@ -163,15 +164,10 @@ noeud* rechercher_noeud(noeud* courant,char* chem) {
     //Si c'est un chemin absolu
     noeud* res=courant;
     char* c=capture(chem);
-    if(c[0]=='/' && courant==courant->racine){
+    if(strlen(c)==0) return courant->racine;
+    if(c[0]=='/'){
        if(c[1]!='/'){
          res = courant->racine;
-         if(courant==getDernier(courant->racine,chem)) {
-            free(c);
-            perror("Vous etes déjà dans ce dossier");
-            return courant;
-            exit(EXIT_FAILURE);
-         }
        char* chemin = capture(chem);
        if (res->fils != NULL && chemin != NULL) {
         char* token = strtok(chemin, "/");
@@ -181,7 +177,7 @@ noeud* rechercher_noeud(noeud* courant,char* chem) {
                 token = strtok(NULL, "/");
             } else {
                 res=courant;
-                perror("No such file or directory");
+                perror("No such file or directory DDDD");
                 free(chemin);
                 free(c);
                 exit(EXIT_FAILURE);
@@ -193,13 +189,13 @@ noeud* rechercher_noeud(noeud* courant,char* chem) {
        else {
          free(chemin);
          free(c);
-         perror("No such file or directory");
+         perror("No such file or directory GGGG");
          exit(EXIT_FAILURE);
        }
       }
       else{
         free(c);
-        perror("No such file or directory");
+        perror("No such file or directory TTTT");
         exit(EXIT_FAILURE);
       }
     }
@@ -217,10 +213,10 @@ noeud* rechercher_noeud(noeud* courant,char* chem) {
                 token = strtok(NULL, "/");
             } else {
                 res=courant;
-                perror("No such file or directory");
+                mkdir(res,token);
                 free(chemin);
                 free(c);
-                exit(EXIT_FAILURE);
+                return res;
                 break;
             }
         } while (token != NULL);
@@ -229,13 +225,13 @@ noeud* rechercher_noeud(noeud* courant,char* chem) {
       else {
          free(chemin);
          free(c);
-         perror("No such file or directory");
+         perror("No such file or directory JJJ");
          exit(EXIT_FAILURE);
       }
      }
      else{
         free(c);
-        perror("No such file or directory");
+        perror("No such file or directory KKK");
         exit(EXIT_FAILURE);
      }
     }
@@ -243,25 +239,25 @@ noeud* rechercher_noeud(noeud* courant,char* chem) {
     return res;
 }
 /*-------------------------------------------*/
-noeud* copier_noeud(noeud* src) {
+noeud* copier_noeud(noeud* src) { //fonction qui copie un noeud et tout ses fils (et les fils de ses fils etc)
     if (src == NULL) {
         return NULL;
         exit(EXIT_FAILURE);
     }
-    noeud* copie = (noeud*)malloc(sizeof(noeud));
-    copie->est_dossier = src->est_dossier;
-    strncpy(copie->nom, src->nom, 100);
-    copie->pere = src->pere;
-    copie->racine = src->racine;
-    copie->fils = NULL;
-    liste_noeud* src_fils = src->fils;
-    liste_noeud* copie_fils = NULL;
+    noeud* copie = (noeud*)malloc(sizeof(noeud)); //on alloue de la mémoire pour un futur noeud copie
+    copie->est_dossier = src->est_dossier;        //si src est un dossier, copie le sera également et inversement
+    strncpy(copie->nom, src->nom, 100);           //on copie le nom de src dans le noeud copie dans la limite de 100 caractères
+    copie->pere = src->pere;                      //le père de src sera également le père de copie
+    copie->racine = src->racine;                  //sa racine aussi
+    copie->fils = NULL;                           //copie n'a pas de fils
+    liste_noeud* src_fils = src->fils;            //on créée une liste de noeud src_fils qui est égale au fils de src
+    liste_noeud* copie_fils = NULL;               
     liste_noeud* prev_fils = NULL;
-    while (src_fils != NULL) {
-        copie_fils = (liste_noeud*)malloc(sizeof(liste_noeud));
-        copie_fils->no = copier_noeud(src_fils->no);
-        copie_fils->succ = NULL;
-        if (prev_fils == NULL) {
+    while (src_fils != NULL) {                    //tant que src à toujours un fils
+        copie_fils = (liste_noeud*)malloc(sizeof(liste_noeud)); //on alloue de la mémoire pour une liste de noeud de copie
+        copie_fils->no = copier_noeud(src_fils->no);            //récursivement on ajoute au fils de copie le fils de src
+        copie_fils->succ = NULL;                                //son succésseur est null pour tant qu'on a pas encore ajouté d'autre fils
+        if (prev_fils == NULL) {                                //ensuite on regarde si c'est le premier fils ajouté ou non et on manipule les succésseur en fonction de ça
             copie->fils = copie_fils;
         } else {
             prev_fils->succ = copie_fils;
@@ -273,21 +269,38 @@ noeud* copier_noeud(noeud* src) {
     return copie;
 }
 /*-------------------------------------------*/
-void ajouter_fils(noeud* parent, noeud* fils) {
-    if (parent == NULL || fils == NULL) {
-        return;
-        exit(EXIT_FAILURE);
-    }
-    liste_noeud* nouvel_element = (liste_noeud*)malloc(sizeof(liste_noeud));
-    nouvel_element->no = copier_noeud(fils);
-    nouvel_element->succ = NULL;
-    liste_noeud* dernier_element = parent->fils;
-    if (dernier_element == NULL) {
-        parent->fils = nouvel_element;
-    } else {
-        while (dernier_element->succ != NULL) {
-            dernier_element = dernier_element->succ;
+void ajouter_fils(noeud* parent, liste_noeud* fils) {
+    // Parcours de la liste des fils à copier
+    liste_noeud* p = fils;
+    while (p != NULL) {
+        // Création d'un nouveau nœud fils avec les mêmes propriétés que celui à copier
+        noeud* new_fils = (noeud*)malloc(sizeof(noeud));
+        new_fils->est_dossier = p->no->est_dossier;
+        strcpy(new_fils->nom, p->no->nom);
+        new_fils->pere = parent;
+        new_fils->racine = parent->racine;
+        new_fils->fils = NULL; // initialise la liste des fils à NULL
+
+        // Ajout du nouveau fils à la liste des fils du parent
+        liste_noeud* new_liste_noeud = (liste_noeud*)malloc(sizeof(liste_noeud));
+        new_liste_noeud->no = new_fils;
+        new_liste_noeud->succ = NULL;
+
+        if (parent->fils == NULL) {
+            parent->fils = new_liste_noeud;
         }
-        dernier_element->succ = nouvel_element;
+        else {
+            liste_noeud* last = parent->fils;
+            while (last->succ != NULL) {
+                last = last->succ;
+            }
+            last->succ = new_liste_noeud;
+        }
+
+        // Copie récursive des descendants
+        ajouter_fils(new_fils, p->no->fils);
+
+        // Passage au fils suivant dans la liste à copier
+        p = p->succ;
     }
 }

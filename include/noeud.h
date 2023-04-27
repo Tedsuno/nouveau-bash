@@ -34,5 +34,5 @@ void free_chem(noeud* courant);
 void free_noeud(noeud* n);
 noeud* rechercher_noeud(noeud* courant,char* chem);
 noeud* copier_noeud(noeud* src);
-void ajouter_fils(noeud* parent, noeud* fils);
+void ajouter_fils(noeud* parent, liste_noeud* fils);
 #endif /* NOEUD_H */
