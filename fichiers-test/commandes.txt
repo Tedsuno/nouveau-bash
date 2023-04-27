@@ -1,0 +1,17 @@
+mkdir Cours
+cd Cours
+mkdir ProjetC
+mkdir Anglais
+cd
+touch edt
+cp Cours /Td
+cd Td
+cd
+mkdir amine
+cd amine
+mkdir am
+cd
+cp amine Cours/ProjetC
+cd Cours/ProjetC
+ls
+
