@@ -35,4 +35,5 @@ void free_noeud(noeud* n);
 noeud* rechercher_noeud(noeud* courant,char* chem);
 noeud* copier_noeud(noeud* src);
 void ajouter_fils(noeud* parent, liste_noeud* fils);
+char* NomRacine(noeud* courant);
 #endif /* NOEUD_H */

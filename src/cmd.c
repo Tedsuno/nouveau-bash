@@ -35,7 +35,7 @@ noeud* cd_chem(noeud* courant, const char* chem){
                 token = strtok(NULL, "/");
             } else {
                 res=courant;
-                perror("No such file or directory");
+                perror("No such file or directory ssssd");
                 free(chemin);
                 free(c);
                 exit(EXIT_FAILURE);
@@ -47,13 +47,13 @@ noeud* cd_chem(noeud* courant, const char* chem){
        else {
          free(chemin);
          free(c);
-         perror("No such file or directory");
+         perror("No such file or directory fffff");
          exit(EXIT_FAILURE);
        }
       }
       else{
         free(c);
-        perror("No such file or directory");
+        perror("No such file or directory ggggggggggg");
         exit(EXIT_FAILURE);
       }
     }
@@ -71,7 +71,7 @@ noeud* cd_chem(noeud* courant, const char* chem){
                 token = strtok(NULL, "/");
             } else {
                 res=courant;
-                perror("No such file or directory");
+                perror("No such file or directory ggggggggghhhhhhhhhh");
                 free(chemin);
                 free(c);
                 exit(EXIT_FAILURE);
@@ -83,13 +83,13 @@ noeud* cd_chem(noeud* courant, const char* chem){
       else {
          free(chemin);
          free(c);
-         perror("No such file or directory");
+         perror("No such file or directory jjjjjjjjj");
          exit(EXIT_FAILURE);
       }
      }
      else{
         free(c);
-        perror("No such file or directory");
+        perror("No such file or directory aaaaaaaaaaaa");
         exit(EXIT_FAILURE);
      }
     }
@@ -102,7 +102,7 @@ noeud* cd(noeud* courant){
 }
 /*-------------------------------------------*/
 noeud* cd_point(noeud* courant){
-    if(courant->pere==NULL){ perror("No such file or directory"); exit(EXIT_FAILURE);}
+    if(courant->pere==NULL){ perror("No such file or directory Sss"); exit(EXIT_FAILURE);}
     if(courant->pere!=NULL){ return courant->pere;}
     return NULL;
 }
@@ -200,11 +200,6 @@ void rm(noeud* courant,const char* chem){
     if(c[0]=='/' && courant==courant->racine){
        if(c[1]!='/'){
          toDelete = courant->racine;
-         /*if(courant==getDernier(courant->racine,chem)) {
-            perror("Vous etes déjà dans ce dossier");
-            free(c);
-            exit(EXIT_FAILURE);
-         }*/
     char* chemin = capture(chem);
     if (toDelete->fils != NULL && chemin != NULL) {
         char* token = strtok(chemin, "/");
@@ -214,7 +209,7 @@ void rm(noeud* courant,const char* chem){
                 token = strtok(NULL, "/");
             } else {
                 toDelete=courant;
-                perror("No such file or directory");
+                perror("No such file or directory GR SX");
                 free(chemin);
                 free(c);
                 exit(EXIT_FAILURE);
@@ -224,7 +219,7 @@ void rm(noeud* courant,const char* chem){
     } else {
         free(chemin);
         free(c);
-        perror("No such file or directory");
+        perror("No such file or directory   ADZ E");
         exit(EXIT_FAILURE);
     }
     liste_noeud* fils_de_pere=toDelete->pere->fils;
@@ -246,7 +241,7 @@ void rm(noeud* courant,const char* chem){
     }
     else{
         free(c);
-        perror("No such file or directory");
+        perror("No such file or directory ggggggg");
         exit(EXIT_FAILURE);
       }
     }
@@ -262,14 +257,14 @@ void rm(noeud* courant,const char* chem){
                 token = strtok(NULL, "/");
             } else {
                 toDelete=courant;
-                perror("No such file or directory");
+                perror("No such file or directory dfd");
                 free(chemin);
                 exit(EXIT_FAILURE);
             }
         } while (token != NULL);
         free(chemin);
     } else {
-        perror("No such file or directory");
+        perror("No such file or directory mmmmmmmmmm");
         exit(EXIT_FAILURE);
     }
     liste_noeud* fils_de_pere=toDelete->pere->fils;
@@ -290,7 +285,7 @@ void rm(noeud* courant,const char* chem){
     }
     }
     else{
-        perror("No such file or directory");
+        perror("No such file or directory sqdF");
         exit(EXIT_FAILURE);
     }
     }

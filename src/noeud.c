@@ -118,19 +118,33 @@ int nb_fils(noeud* courant) {
     }
       return count;
 }
+/*-------------------------------------------*/
+char* NomRacine(noeud* courant) {
+    static char nom[100];
+    if (courant == courant->racine) {
+        strcpy(nom, "/");
+    } else {
+        strcpy(nom, courant->nom);
+    }
+    return nom;
+}
 /*---------------------------------------------------------------*/
 void print_arbre(noeud* courant) {
-    printf("Noeud %s (%s), %d fils : ", courant->nom, courant->est_dossier ? "D" : "F", nb_fils(courant));
+    printf("Noeud %s (%s), père : %s, %d fils : ", NomRacine(courant), courant->est_dossier ? "D" : "F",courant->pere->nom, nb_fils(courant));
     if (courant->fils == NULL) {
-        printf("Aucun fils\n");
+        puts("");
         return;
     }
-    puts("");
     liste_noeud *fils=courant->fils;
     while (fils!=NULL) {
-        printf("Noeud %s (%s), pere : %s, ", fils->no->nom, fils->no->est_dossier ? "D" : "F", courant->nom);
-        print_arbre(fils->no);
+        printf("%s (%s), ", fils->no->nom, fils->no->est_dossier ? "D" : "F");
         fils=fils->succ;
+    }
+    puts("");
+    fils=courant->fils;
+    while (fils!=NULL) {
+    print_arbre(fils->no);
+    fils=fils->succ;
     }
 }
 /*-------------------------------------------*/
