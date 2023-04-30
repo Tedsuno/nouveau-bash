@@ -38,7 +38,8 @@ int main(int argc, char *argv[]){
                     token2[len - 1] = '\0';
                 }
             }        
-    }
+        }
+    
     if(strcmp(token[c],"mkdir")==0){
             mkdir(courant,token2);
     }
@@ -84,7 +85,8 @@ int main(int argc, char *argv[]){
     }    
     if(strcmp(token3[c], "cd\n") == 0) { printf("\ntoken3[c] : %s\n",token3[c]);courant=cd(courant);}
     if(strcmp(token3[c],"ls\n")==0){ ls(courant); puts("-------------"); }
-    if(strcmp(token3[c],"cd")==0){    
+    if(strcmp(token3[c],"cd")==0 && token2!=NULL){ 
+        //printf("aaaa");   
         if(strcmp(token2,"..")==0 || strcmp(token2,"..\n")==0){ courant=cd_point(courant); }
         else { courant=cd_chem(courant,token2); }
     }
