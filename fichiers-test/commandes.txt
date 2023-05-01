@@ -11,3 +11,4 @@ cd Td
 mkdir td1
 mkdir td2
 cd
+ls

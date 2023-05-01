@@ -83,7 +83,7 @@ int main(int argc, char *argv[]){
     if(strcmp(token3[c],"touch")==0){
             touch(courant,token2);
     }    
-    if(strcmp(token3[c], "cd\n") == 0) { printf("\ntoken3[c] : %s\n",token3[c]);courant=cd(courant);}
+    if(strcmp(token3[c], "cd\n") == 0)courant=cd(courant);
     if(strcmp(token3[c],"ls\n")==0){ ls(courant); puts("-------------"); }
     if(strcmp(token3[c],"cd")==0 && token2!=NULL){ 
         //printf("aaaa");   

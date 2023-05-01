@@ -120,17 +120,20 @@ int nb_fils(noeud* courant) {
 }
 /*-------------------------------------------*/
 char* NomRacine(noeud* courant) {
-    static char nom[100];
+    char* nom;
     if (courant == courant->racine) {
+        nom = malloc(2);
         strcpy(nom, "/");
     } else {
+        nom = malloc(strlen(courant->nom) + 1);
         strcpy(nom, courant->nom);
     }
     return nom;
 }
+
 /*---------------------------------------------------------------*/
 void print_arbre(noeud* courant) {
-    printf("Noeud %s (%s), père : %s, %d fils : ", NomRacine(courant), courant->est_dossier ? "D" : "F",courant->pere->nom, nb_fils(courant));
+    printf("Noeud %s (%s), père : %s, %d fils : ", NomRacine(courant), courant->est_dossier ? "D" : "F", NomRacine(courant->pere), nb_fils(courant));
     if (courant->fils == NULL) {
         puts("");
         return;
@@ -174,81 +177,41 @@ void free_noeud(noeud* n) {
     free(n);
 }
 /*-------------------------------------------*/
-noeud* rechercher_noeud(noeud* courant,char* chem) {
+noeud * rechercher_noeud(noeud * courant, char * chem) {
     //Si c'est un chemin absolu
-    noeud* res=courant;
-    char* c=capture(chem);
-    if(strlen(c)==0) return courant->racine;
-    if(c[0]=='/'){
-       if(c[1]!='/'){
-         res = courant->racine;
-       char* chemin = capture(chem);
-       if (res->fils != NULL && chemin != NULL) {
-        char* token = strtok(chemin, "/");
-        do {
+    noeud * res = courant;
+    char * c = capture(chem);
+    if (strlen(c) == 0) return courant -> racine;
+    if (c[0] == '/') res = courant -> racine; else res = courant;
+      if (c[1] != '/') {
+        char * chemin = capture(chem);
+        if (res -> fils != NULL && chemin != NULL) {
+          char * token = strtok(chemin, "/");
+          do {
             if (appartient(res, token)) {
-                res = getAppartient(res, token);
-                token = strtok(NULL, "/");
+              res = getAppartient(res, token);
+              token = strtok(NULL, "/");
             } else {
-                res=courant;
-                perror("No such file or directory DDDD");
-                free(chemin);
-                free(c);
-                exit(EXIT_FAILURE);
-                break;
-            }
-         } while (token != NULL);
-         free(chemin);
-       } 
-       else {
-         free(chemin);
-         free(c);
-         perror("No such file or directory GGGG");
-         exit(EXIT_FAILURE);
-       }
-      }
-      else{
-        free(c);
-        perror("No such file or directory TTTT");
-        exit(EXIT_FAILURE);
-      }
-    }
-    /*+++++++++++++++++++++++++++++++++++++++*/
-    //Si ce n'est pas un chemin absolu
-    else{
-      if(c[1]!='/'){
-      res = courant;
-      char* chemin = capture(chem);
-      if (res->fils != NULL && chemin != NULL) {
-        char* token = strtok(chemin, "/");
-        do {
-            if (appartient(res, token)) {
-                res = getAppartient(res, token);
-                token = strtok(NULL, "/");
-            } else {
-                res=courant;
+              res=courant;
                 mkdir(res,token);
                 free(chemin);
                 free(c);
                 return res;
-                break;
+                break; 
             }
-        } while (token != NULL);
-        free(chemin);
-      } 
-      else {
-         free(chemin);
-         free(c);
-         perror("No such file or directory JJJ");
-         exit(EXIT_FAILURE);
-      }
-     }
-     else{
+          } while (token != NULL);
+          free(chemin);
+        } else {
+          free(chemin);
+          free(c);
+          perror("No such file or directory GGGG");
+          exit(EXIT_FAILURE);
+        }
+      } else {
         free(c);
-        perror("No such file or directory KKK");
+        perror("No such file or directory TTTT");
         exit(EXIT_FAILURE);
-     }
-    }
+      }
     free(c);
     return res;
 }

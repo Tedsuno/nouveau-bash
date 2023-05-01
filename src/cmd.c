@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+/*-------------------------------------------*/
 void ls(noeud* courant){
     liste_noeud* fils=courant->fils;
     while(fils!=NULL){
@@ -17,15 +18,8 @@ noeud* cd_chem(noeud* courant, const char* chem){
     //Si c'est un chemin absolu
     noeud* res=courant;
     char* c=capture(chem);
-    if(c[0]=='/' && courant==courant->racine){
+    if(c[0]=='/' && courant==courant->racine) res=courant->racine;
        if(c[1]!='/'){
-         res = courant->racine;
-         /*if(courant==getDernier(courant->racine,chem)) {
-            free(c);
-            perror("Vous etes déjà dans ce dossier");
-            return courant;
-            exit(EXIT_FAILURE);
-         }*/
        char* chemin = capture(chem);
        if (res->fils != NULL && chemin != NULL) {
         char* token = strtok(chemin, "/");
@@ -56,43 +50,6 @@ noeud* cd_chem(noeud* courant, const char* chem){
         perror("No such file or directory ggggggggggg");
         exit(EXIT_FAILURE);
       }
-    }
-    /*+++++++++++++++++++++++++++++++++++++++*/
-    //Si ce n'est pas un chemin absolu
-    else{
-      if(c[1]!='/'){
-      res = courant;
-      char* chemin = capture(chem);
-      if (res->fils != NULL && chemin != NULL) {
-        char* token = strtok(chemin, "/");
-        do {
-            if (appartient(res, token)) {
-                res = getAppartient(res, token);
-                token = strtok(NULL, "/");
-            } else {
-                res=courant;
-                perror("No such file or directory ggggggggghhhhhhhhhh");
-                free(chemin);
-                free(c);
-                exit(EXIT_FAILURE);
-                break;
-            }
-        } while (token != NULL);
-        free(chemin);
-      } 
-      else {
-         free(chemin);
-         free(c);
-         perror("No such file or directory jjjjjjjjj");
-         exit(EXIT_FAILURE);
-      }
-     }
-     else{
-        free(c);
-        perror("No such file or directory aaaaaaaaaaaa");
-        exit(EXIT_FAILURE);
-     }
-    }
     free(c);
     return res;
 }
@@ -194,12 +151,10 @@ void touch(noeud* courant, const char* nom) {
 /*-------------------------------------------*/
 void rm(noeud* courant,const char* chem){
     noeud* toDelete = courant;
-
     //Si c'est un chemin absolu    
     char* c=capture(chem);
-    if(c[0]=='/' && courant==courant->racine){
+    if(c[0]=='/' && courant==courant->racine) toDelete = courant->racine;
        if(c[1]!='/'){
-         toDelete = courant->racine;
     char* chemin = capture(chem);
     if (toDelete->fils != NULL && chemin != NULL) {
         char* token = strtok(chemin, "/");
@@ -244,51 +199,6 @@ void rm(noeud* courant,const char* chem){
         perror("No such file or directory ggggggg");
         exit(EXIT_FAILURE);
       }
-    }
-    //Si ce n'est pas un chemin absolu
-    else{
-    if(c[1]!='/'){
-        char* chemin = capture(chem);
-    if (toDelete->fils != NULL && chemin != NULL) {
-        char* token = strtok(chemin, "/");
-        do {
-            if (appartient(toDelete, token)) {
-                toDelete = getAppartient(toDelete, token);
-                token = strtok(NULL, "/");
-            } else {
-                toDelete=courant;
-                perror("No such file or directory dfd");
-                free(chemin);
-                exit(EXIT_FAILURE);
-            }
-        } while (token != NULL);
-        free(chemin);
-    } else {
-        perror("No such file or directory mmmmmmmmmm");
-        exit(EXIT_FAILURE);
-    }
-    liste_noeud* fils_de_pere=toDelete->pere->fils;
-    free_chem(toDelete);
-    liste_noeud* prev_fils = NULL;
-    while(fils_de_pere != NULL){
-        if(fils_de_pere->no == toDelete){
-            if(prev_fils == NULL){
-                toDelete->pere->fils = fils_de_pere->succ;
-            } else {
-                prev_fils->succ = fils_de_pere->succ;
-            }
-            free(fils_de_pere);
-            break;
-        }
-        prev_fils = fils_de_pere;
-        fils_de_pere = fils_de_pere->succ;
-    }
-    }
-    else{
-        perror("No such file or directory sqdF");
-        exit(EXIT_FAILURE);
-    }
-    }
     free(c);
 }
 /*-------------------------------------------*/
@@ -303,19 +213,19 @@ void cp(noeud* courant,char* chemin_src, char* chemin_dest) {
         exit(EXIT_FAILURE);
     }
     noeud* copie_src = copier_noeud(src); //copie tout les fils du dernier noeud source
-    char* py=chemin_sans_dernier(chemin_dest);
+    char* py=chemin_sans_dernier(chemin_dest); //prend tout le chemin sans le dernier dossier/fichier
     noeud* dest = rechercher_noeud(courant, py); //se place à l'avant dernier noeud du chemin destination
     if (dest == NULL) {
         printf("Erreur : Le chemin destination n'existe pas.\n");
         free_noeud(copie_src);
         exit(EXIT_FAILURE);
     }
-    char* ky=chemin_dernier(chemin_dest);
-    if(!appartient(dest,ky)){
+    char* ky=chemin_dernier(chemin_dest); //ky prend le dernier nom du dossier/fichier du chemin de destination
+    if(!appartient(dest,ky)){             //si par rapport au noeud courant, il n'y a pas de fils portant le nom de ky, on le crée.
     mkdir(dest,ky);
     dest=cd_chem(dest,ky);
     ajouter_fils(dest, copie_src->fils);
-    }else{
+    }else{                               //sinon on avance dans ce dossier/fichier et on ajoute les fils 
     dest=cd_chem(dest,ky);
     ajouter_fils(dest, copie_src->fils);
     }

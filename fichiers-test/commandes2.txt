@@ -14,3 +14,9 @@ cp /Cours/ProjetC CopieProjet
 cd
 mv Td /Cours/Td
 cd
+ls
+cd Cours
+ls
+cd Td
+ls
+print
