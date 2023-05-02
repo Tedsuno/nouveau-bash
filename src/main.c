@@ -44,6 +44,11 @@ int main(int argc, char *argv[]){
             mkdir(courant,token2);
     }
     if(strcmp(token[c],"print")==0 || strcmp(token[c],"print\n")==0){
+            char *token_bis = strtok(token2, " ");
+            if(token_bis!=NULL && strlen(token_bis)!=0){
+                perror("error noms invalides pour print");
+                exit(EXIT_FAILURE);
+            }
             courant=courant->racine;
             print_arbre(courant);
             puts("-------------");
@@ -56,6 +61,11 @@ int main(int argc, char *argv[]){
               str1 = strdup(token_bis);
               token_bis = strtok(NULL, " ");
               str2 = strdup(token_bis);
+              token_bis = strtok(NULL, " ");
+              if(token_bis!=NULL && strlen(token_bis)!=0){
+                perror("error noms invalides pour mv");
+                exit(EXIT_FAILURE);
+              }
            }
            mv(courant,str1,str2);
     }
@@ -66,7 +76,13 @@ int main(int argc, char *argv[]){
            if (token_bis != NULL) {
               str1 = strdup(token_bis);
               token_bis = strtok(NULL, " ");
+
               str2 = strdup(token_bis);
+              token_bis = strtok(NULL, " ");
+              if(token_bis!=NULL && strlen(token_bis)!=0){
+                perror("error noms invalides pour cp");
+                exit(EXIT_FAILURE);
+              }
            }
            cp(courant,str1,str2);
     }    

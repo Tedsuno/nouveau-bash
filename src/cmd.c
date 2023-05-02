@@ -98,6 +98,10 @@ void pwd(noeud* courant){
 }
 /*---------------------------------------------------------------*/
 void mkdir(noeud* parent, const char *nom) {
+    if(!estValide(nom)){
+        perror("erreor nom invalide");
+        exit(EXIT_FAILURE);
+    }
     if(estValide(nom) && !existeDeja(parent,nom)){
     char *n=capture(nom);
     noeud *newDir=creerNoeud(true,n,parent,NULL,parent->racine);
@@ -124,6 +128,10 @@ void mkdir(noeud* parent, const char *nom) {
 }
 /*-------------------------------------------*/
 void touch(noeud* courant, const char* nom) {
+    if(!estValide(nom)){
+        perror("erreor nom invalide");
+        exit(EXIT_FAILURE);
+    }
     if (estValide(nom) && !existeDeja(courant, nom)) {
         char* c = capture(nom);
         noeud* newFic = creerNoeud(false, c, courant, NULL, courant->racine);
