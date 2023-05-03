@@ -10,7 +10,7 @@
 noeud* creerNoeud(bool est_dos, const char* nom, noeud* pere,liste_noeud * fils, noeud* racine){
        noeud* n=malloc(sizeof(noeud));
        if(n==NULL){
-        printf("Erreur allocation memoire creerNoeud");
+        printf("Erreur allocation memoire creerNoeud.");
         exit(EXIT_FAILURE);
        }
        n->est_dossier=est_dos;
@@ -24,7 +24,7 @@ noeud* creerNoeud(bool est_dos, const char* nom, noeud* pere,liste_noeud * fils,
 noeud* creerRacine(){
        noeud* r=creerNoeud(true,"",NULL,NULL,NULL);
        if(r==NULL){
-        printf("Erreur allocation memoire creerRacine");
+        printf("Erreur allocation memoire creerRacine.");
         exit(EXIT_FAILURE);
        }
        r->pere=r;
