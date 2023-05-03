@@ -9,7 +9,12 @@
 void ls(noeud* courant){
     liste_noeud* fils=courant->fils;
     while(fils!=NULL){
-        printf("%s\n",fils->no->nom);
+        if(fils->no->est_dossier){
+          printf("%s/\n",fils->no->nom);
+        }
+        else{
+          printf("%s\n",fils->no->nom);
+        }
         fils=fils->succ;
     }
 }

@@ -2,8 +2,8 @@
 #define OTHERS_H
 #include <stdbool.h>
 #include <ctype.h>
-char* capture(const char* nom);
-bool estValide(const char *nom);
-char* chemin_sans_dernier(const char* chem);
-char* chemin_dernier(const char* chem);
+extern char* capture(const char* nom);
+extern bool estValide(const char *nom);
+extern char* chemin_sans_dernier(const char* chem);
+extern char* chemin_dernier(const char* chem);
 #endif
