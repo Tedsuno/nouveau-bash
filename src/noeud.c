@@ -25,13 +25,13 @@ noeud* creerRacine(){
 }
 /*---------------------------------------------------------------*/
 bool existeDeja(noeud* courant,const char *nom){ //fonction permettant de faire la meme chose que appartient 
-liste_noeud* liste=courant->fils;
-char *c=capture(nom);
-while(liste!=NULL){
+liste_noeud* liste = courant->fils;
+char *c = capture(nom);
+while(liste != NULL){
     if(strcmp(liste->no->nom,c)==0){
         return true;
     }
-    liste=liste->succ;
+    liste = liste->succ;
 }
 free(c);
 return false;
@@ -66,55 +66,14 @@ noeud* getAppartient(noeud* courant, const char* chem){ //pareil que appartient 
     }
     return current->no;
 }
-/*-------------------------------------------*/
-bool estDernier(noeud* courant,const char* chem){ //fonction servant à savoir si le dernier bout de chemin est égale au noeud courant
-    char* nom=NULL;
-    char* chemin=capture(chem);
-    char* token = strtok(chemin, "/");
-        do {
-            nom=token;
-            token = strtok(NULL, "/");
-        }
-    while (token != NULL);
-    if(strcmp(courant->nom,nom)==0){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-/*-------------------------------------------*/
-noeud* getDernier(noeud* courant,const char* chem){ //fonction servant à aller jusqu'au dernier noeud du chemin s'il existe et le renvoie
-    noeud* res = courant;
-    char* chemin = capture(chem);
-    if (res->fils != NULL && chemin != NULL) { //si le noeud courant à des fils et que le chemin n'est pas nul
-        char* token = strtok(chemin, "/");     //coupe le chemin quand il rencontre un '/'
-        do {
-            if (appartient(res, token)) {      //si dans la liste des fils du noeud courant il y'a le bout de chemin coupé par '/'
-                res = getAppartient(res, token); //alors le noeud courant est maintenant égale au noeud du bout de chemin recherché
-                token = strtok(NULL, "/");       // et on recoupe le chemin au prochain '/' pour prendre la suite du chemin
-            } else { 
-                res=courant;                    //si dans le noeud courant il n'y a pas le bout de chemin dans ses fils, !erreur!
-                perror("No such file or directory1111111");
-                exit(EXIT_FAILURE);
-                break;
-            }
-        } while (token != NULL);                //on fait cette manipulation jusqu'a la fin du chemin
-        free(chemin);
-    } else {
-        perror("No such file or directory22222");   //si pas de fils ou chemin null, !erreur!
-        exit(EXIT_FAILURE);
-    }
-    return res;
-}
 /*---------------------------------------------------------------*/
 int nb_fils(noeud* courant) {
-    if(courant->fils==NULL) return 0;
-    int count=0;
-    liste_noeud* fils=courant->fils;
-    while (fils!=NULL) {
+    if(courant->fil == NULL) return 0;
+    int count = 0;
+    liste_noeud* fils = courant->fils;
+    while (fils != NULL) {
         count++;
-        fils=fils->succ;
+        fils = fils->succ;
     }
       return count;
 }
@@ -230,7 +189,9 @@ noeud* copier_noeud(noeud* src) { //fonction qui copie un noeud et tout ses fils
     liste_noeud* src_fils = src->fils;            //on créée une liste de noeud src_fils qui est égale au fils de src
     liste_noeud* copie_fils = NULL;               
     liste_noeud* prev_fils = NULL;
-    while (src_fils != NULL) {                    //tant que src à toujours un fils
+    //on a copié le noeud courant complétement, maintenant on va passer à ses fils(et les fils de ses fils etc)
+
+    while (src_fils != NULL) {                                  //tant que src à toujours un fils
         copie_fils = (liste_noeud*)malloc(sizeof(liste_noeud)); //on alloue de la mémoire pour une liste de noeud de copie
         copie_fils->no = copier_noeud(src_fils->no);            //récursivement on ajoute au fils de copie le fils de src
         copie_fils->succ = NULL;                                //son succésseur est null pour tant qu'on a pas encore ajouté d'autre fils
@@ -242,7 +203,6 @@ noeud* copier_noeud(noeud* src) { //fonction qui copie un noeud et tout ses fils
         prev_fils = copie_fils;
         src_fils = src_fils->succ;
     }
-
     return copie;
 }
 /*-------------------------------------------*/

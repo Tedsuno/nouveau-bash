@@ -15,7 +15,6 @@ void ls(noeud* courant){
 }
 /*-------------------------------------------*/
 noeud* cd_chem(noeud* courant, const char* chem){
-    //Si c'est un chemin absolu
     noeud* res=courant;
     char* c=capture(chem);
     if(c[0]=='/' && courant==courant->racine) res=courant->racine;
@@ -150,8 +149,7 @@ void touch(noeud* courant, const char* nom) {
 }
 /*-------------------------------------------*/
 void rm(noeud* courant,const char* chem){
-    noeud* toDelete = courant;
-    //Si c'est un chemin absolu    
+    noeud* toDelete = courant;   
     char* c=capture(chem);
     if(c[0]=='/' && courant==courant->racine) toDelete = courant->racine;
        if(c[1]!='/'){
