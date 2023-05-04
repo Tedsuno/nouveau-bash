@@ -2,14 +2,14 @@
 #define CMD_H
 
 #include "noeud.h"
-void ls(noeud* courant);
-noeud* cd_chem(noeud* courant, const char* chem);
-noeud* cd(noeud* courant);
-noeud* cd_point(noeud* courant);
-void pwd(noeud* courant);
-void mkdir(noeud* parent, const char *nom);
-void touch(noeud* courant, const char* nom);
-void rm(noeud* courant,const char* chem);
-void cp(noeud* courant,char* chemin_src, char* chemin_dest);
-void mv(noeud* courant,char* chem1, char* chem2);
+extern void ls(noeud* courant);
+extern noeud* cd_chem(noeud* courant, const char* chem);
+extern noeud* cd(noeud* courant);
+extern noeud* cd_point(noeud* courant);
+extern void pwd(noeud* courant);
+extern void mkdir(noeud* parent, const char *nom);
+extern void touch(noeud* courant, const char* nom);
+extern void rm(noeud* courant,const char* chem);
+extern void cp(noeud* courant,char* chemin_src, char* chemin_dest);
+extern void mv(noeud* courant,char* chem1, char* chem2);
 #endif
