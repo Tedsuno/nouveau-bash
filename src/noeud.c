@@ -259,3 +259,19 @@ void ajouter_fils(noeud* parent, liste_noeud* fils) {
         p = p->succ;
     }
 }
+bool appartient_sous_arbre(noeud* racine, noeud* noeud_a_chercher) {
+    if (racine == NULL || noeud_a_chercher == NULL) {
+        return false;
+    }
+    if (racine == noeud_a_chercher) {
+        return true;
+    }
+    liste_noeud* fils_courant = racine->fils;
+    while (fils_courant != NULL) {
+        if (appartient_sous_arbre(fils_courant->no, noeud_a_chercher)) {
+            return true;
+        }
+        fils_courant = fils_courant->succ;
+    }
+    return false;
+}

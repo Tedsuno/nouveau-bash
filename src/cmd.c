@@ -237,6 +237,11 @@ void cp(noeud* courant,char* chemin_src, char* chemin_dest) {
         exit(EXIT_FAILURE);
     }
     char* ky=chemin_dernier(chemin_dest); //ky prend le dernier nom du dossier/fichier du chemin de destination
+    if (appartient_sous_arbre(src, dest)) {
+    printf("Erreur : Le noeud destination est dans le sous-arbre du noeud source.\n");
+    free_noeud(copie_src);
+    exit(EXIT_FAILURE);
+    }
     if(!appartient(dest,ky)){             //si par rapport au noeud courant, il n'y a pas de fils portant le nom de ky, on le crée.
     mkdir(dest,ky);
     dest=cd_chem(dest,ky);

@@ -37,4 +37,5 @@ extern noeud* copier_noeud(noeud* src);
 extern void ajouter_fils(noeud* parent, liste_noeud* fils);
 extern char* NomRacine(noeud* courant);
 extern bool estParent(noeud* courant, noeud* parent);
+extern bool appartient_sous_arbre(noeud* racine, noeud* noeud_a_chercher);
 #endif /* NOEUD_H */

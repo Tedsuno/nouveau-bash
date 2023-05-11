@@ -18,7 +18,7 @@ int main(int argc, char *argv[]){
    char temp[100];
    char *token[100];
    char *token2;
-   char *token3[100];
+   char *token3[200];
    FILE* flux = fopen(argv[1], "r");
     if (flux == NULL) {
     perror("Probleme ouverture de fichier");
