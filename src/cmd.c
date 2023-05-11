@@ -22,7 +22,7 @@ void ls(noeud* courant){
 noeud* cd_chem(noeud* courant, const char* chem){
     noeud* res=courant;
     char* c=capture(chem);
-    if(c[0]=='/' && courant==courant->racine) res=courant->racine;
+    if(c[0]=='/') res=courant->racine;
        if(c[1]!='/'){
        char* chemin = capture(chem);
        if (res->fils != NULL && chemin != NULL) {
@@ -164,7 +164,7 @@ void touch(noeud* courant, const char* nom) {
 void rm(noeud* courant,const char* chem){
     noeud* toDelete = courant;   
     char* c=capture(chem);
-    if(c[0]=='/' && courant==courant->racine) toDelete = courant->racine;
+    if(c[0]=='/') toDelete = courant->racine;
        if(c[1]!='/'){
     char* chemin = capture(chem);
     if (toDelete->fils != NULL && chemin != NULL) {
@@ -187,6 +187,11 @@ void rm(noeud* courant,const char* chem){
         free(c);
         perror("No such file or directory   ADZ E");
         exit(EXIT_FAILURE);
+    }
+    if(estParent(courant,toDelete)){
+        perror("Vous ne pouvez pas supprimer un parent!");
+        free(c);
+        return;
     }
     liste_noeud* fils_de_pere=toDelete->pere->fils;
     free_chem(toDelete);

@@ -76,7 +76,7 @@ noeud* getAppartient(noeud* courant, const char* chem){ //pareil que appartient 
 }
 /*---------------------------------------------------------------*/
 int nb_fils(noeud* courant) {
-    if(courant->fil == NULL) return 0;
+    if(courant->fils == NULL) return 0;
     int count = 0;
     liste_noeud* fils = courant->fils;
     while (fils != NULL) {
@@ -97,7 +97,6 @@ char* NomRacine(noeud* courant) {
     }
     return nom;
 }
-
 /*---------------------------------------------------------------*/
 void print_arbre(noeud* courant) {
     printf("Noeud %s (%s), père : %s, %d fils : ", NomRacine(courant), courant->est_dossier ? "D" : "F", NomRacine(courant->pere), nb_fils(courant));
@@ -144,15 +143,25 @@ void free_noeud(noeud* n) {
     free(n);
 }
 /*-------------------------------------------*/
+bool estParent(noeud* courant, noeud* parent){
+    noeud* g=courant;
+    while(g!=courant->racine){
+        if(parent==g){
+            return true;
+        }
+        g=g->pere;
+    }
+    return false;
+}
+/*-------------------------------------------*/
 noeud * rechercher_noeud(noeud * courant, char * chem) {
-    //Si c'est un chemin absolu
     noeud * res = courant;
     char * c = capture(chem);
     if (strlen(c) == 0) return courant -> racine;
     if (c[0] == '/') res = courant -> racine; else res = courant;
       if (c[1] != '/') {
         char * chemin = capture(chem);
-        if (res -> fils != NULL && chemin != NULL) {
+        if (res -> fils != NULL || chemin != NULL) {
           char * token = strtok(chemin, "/");
           do {
             if (appartient(res, token)) {
@@ -169,6 +178,7 @@ noeud * rechercher_noeud(noeud * courant, char * chem) {
           } while (token != NULL);
           free(chemin);
         } else {
+          printf("res : %s",res->nom);
           free(chemin);
           free(c);
           perror("No such file or directory GGGG");

@@ -43,14 +43,16 @@ int main(int argc, char *argv[]){
     if(strcmp(token[c],"mkdir")==0){
             mkdir(courant,token2);
     }
-    if(strcmp(token[c],"print")==0 || strcmp(token[c],"print\n")==0){
+     if(strcmp(token[c],"print")==0 || strcmp(token[c],"print\n")==0){
             char *token_bis = strtok(token2, " ");
             if(token_bis!=NULL && strlen(token_bis)!=0){
                 perror("error noms invalides pour print");
                 exit(EXIT_FAILURE);
             }
+            noeud* bis=courant;
             courant=courant->racine;
             print_arbre(courant);
+            courant=bis;
             puts("-------------");
     }
     if(strcmp(token[c],"mv")==0){
@@ -93,8 +95,9 @@ int main(int argc, char *argv[]){
     if(strcmp(token3[c],"rm")==0){
             rm(courant,token2);
    }
-    if(strcmp(token3[c],"pwd")==0){
+    if(strcmp(token3[c],"pwd")==0 || strcmp(token3[c],"pwd\n")==0){
             pwd(courant);
+            puts("-------------");
     }
     if(strcmp(token3[c],"touch")==0){
             touch(courant,token2);
@@ -106,7 +109,7 @@ int main(int argc, char *argv[]){
         if(strcmp(token2,"..")==0 || strcmp(token2,"..\n")==0){ courant=cd_point(courant); }
         else { courant=cd_chem(courant,token2); }
     }
-    else if((strcmp(token3[c],"\n")!=0 && strcmp(token3[c],"cd")!=0 && strcmp(token3[c],"touch")!=0 && strcmp(token3[c],"pwd")!=0 && 
+    else if((strcmp(token3[c],"\n")!=0 && strcmp(token3[c],"cd")!=0 && strcmp(token3[c],"touch")!=0 && strcmp(token3[c],"pwd")!=0 && strcmp(token3[c],"pwd\n")!=0 && 
             strcmp(token3[c],"rm")!=0 && strcmp(token3[c],"ls")!=0 && strcmp(token3[c],"cp")!=0
             && strcmp(token3[c],"mv")!=0 && strcmp(token3[c],"mkdir")!=0 && strcmp(token3[c],"print")!=0 && strcmp(token3[c],"print\n")!=0
              && strcmp(token3[c],"cd\n")!=0 && strcmp(token3[c],"ls\n")!=0)){

@@ -1,0 +1,9 @@
+mkdir Rep1
+cd Rep1
+touch file1
+touch file2
+mkdir Rep3
+cd Rep3
+touch file123
+rm /Rep1
+ls
