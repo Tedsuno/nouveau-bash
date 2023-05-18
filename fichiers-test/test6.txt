@@ -23,7 +23,6 @@ mkdir Rep311
 ls
 cd
 cd Rep1
-pwd
 ls
 print
 rm /Rep2
