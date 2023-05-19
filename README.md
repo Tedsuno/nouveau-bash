@@ -16,4 +16,4 @@ Pour lancer le projet tapez ces deux commandes dans le terminal une fois l'archi
 
 `make`
 
-`./bin/program.exe fichiers-test/commandes.txt`
+`./bin/program fichiers-test/commandes.txt`
