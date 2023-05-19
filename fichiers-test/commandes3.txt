@@ -1,0 +1,9 @@
+mkdir dos
+cd dos
+touch fic11
+touch fic12
+mkdir dos11
+cd dos11
+touch fic111
+cp /dos dos111
+print

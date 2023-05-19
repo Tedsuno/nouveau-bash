@@ -1,0 +1,14 @@
+mkdir Test
+cd Test
+mkdir dos
+touch fic
+ls
+cd ..
+cd
+mkdir Test2
+cd Test2
+ls
+cd ..
+cp Test Test2
+cd Test2
+ls
