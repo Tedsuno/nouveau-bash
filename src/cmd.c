@@ -10,7 +10,7 @@ void ls(noeud* courant){
     liste_noeud* fils=courant->fils;
     while(fils!=NULL){
         if(fils->no->est_dossier){
-          printf("%s/\n",fils->no->nom);
+          printf("%s\n",fils->no->nom);
         }
         else{
           printf("%s\n",fils->no->nom);
@@ -246,9 +246,11 @@ void cp(noeud* courant,char* chemin_src, char* chemin_dest) {
     mkdir(dest,ky);
     dest=cd_chem(dest,ky);
     ajouter_fils(dest, copie_src->fils);
+    free(py);
     }else{                               //sinon on avance dans ce dossier/fichier et on ajoute les fils 
     dest=cd_chem(dest,ky);
     ajouter_fils(dest, copie_src->fils);
+    free(py);
     }
 }
 /*--------------------------------------------------------*/

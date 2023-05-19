@@ -51,6 +51,7 @@ bool appartient(noeud* courant, const char* chem){ //fonction servant à savoir 
        while(current!=NULL){
             char *c=capture(chem);
             if(strcmp(current->no->nom,c)==0){
+               free(c);
                return true;
             }
             free(c);
@@ -66,6 +67,7 @@ noeud* getAppartient(noeud* courant, const char* chem){ //pareil que appartient 
        while(current!=NULL){
             char *c=capture(chem);
             if(strcmp(current->no->nom,c)==0){
+               free(c);
                return current->no;
             }
             free(c);
@@ -99,7 +101,11 @@ char* NomRacine(noeud* courant) {
 }
 /*---------------------------------------------------------------*/
 void print_arbre(noeud* courant) {
-    printf("Noeud %s (%s), père : %s, %d fils : ", NomRacine(courant), courant->est_dossier ? "D" : "F", NomRacine(courant->pere), nb_fils(courant));
+    char* current=NomRacine(courant);
+    char* pere=NomRacine(courant->pere);
+    printf("Noeud %s (%s), père : %s, %d fils : ", current, courant->est_dossier ? "D" : "F", pere, nb_fils(courant));
+    free(current);
+    free(pere);
     if (courant->fils == NULL) {
         puts("");
         return;
