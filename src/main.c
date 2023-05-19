@@ -6,6 +6,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+// Fonction qui permet de savoir si "ch" est une commande valide ou non
 bool is_commande(char* ch){
     if(ch!=NULL){
     if(strcmp(ch,"ls")!=0 && strcmp(ch,"pwd")!=0 && strcmp(ch,"mkdir")!=0 && strcmp(ch,"cp")!=0 && strcmp(ch,"rm")!=0
@@ -15,12 +16,14 @@ bool is_commande(char* ch){
     return true; 
 }
 
+// Fonction qui permet de découper une ligne mot par mot "count" fois à chaque fois qu'elle rencontre un espace ou un saut de ligne
 char* commande_terminale(char* phrase, int count) {
     char* resultat = malloc(strlen(phrase) + 1);
     strcpy(resultat, phrase);
     char* token;
-    char* temp_resultat = resultat; // Variable temporaire pour stocker la valeur de resultat (car on utilise strtok -> free -> fuite mémoire)
-
+    // Variable temporaire pour stocker la valeur de resultat (car on utilise strtok -> free -> fuite mémoire)
+    char* temp_resultat = resultat;
+    // On découpe mot par mot ici grâce à strtok()
     for (int i = 0; i < count; i++) {
         if (resultat != NULL) {
             token = strtok(resultat, " \n\r");
@@ -54,7 +57,7 @@ int main(int argc, char *argv[]){
         return 1;
     }
 
-    char ch[100];
+    char ch[51];
     FILE* flux = fopen(argv[1], "r");
 
     if (flux == NULL) {
@@ -63,18 +66,21 @@ int main(int argc, char *argv[]){
 
     while (fgets(ch, 50, flux) != NULL) {
 
-        char* com1=commande_terminale(ch,1);
-        char* com2=commande_terminale(ch,2);
-        char* com3=commande_terminale(ch,3);
-        char* com4=commande_terminale(ch,4);
-
+        char* com1=commande_terminale(ch,1); // Premier mot de la ligne (représentant le nom de la commande)
+        char* com2=commande_terminale(ch,2); // Deuxieme mot de la ligne (représentant le chemin1)
+        char* com3=commande_terminale(ch,3); // Premier mot de la ligne (représentant le chemin2)
+        char* com4=commande_terminale(ch,4); // Premier mot de la ligne (représentant le chemin3 qui n'existe (normalement) pas)
+        // On vérifie si "com1" est une commande valide
         if(!is_commande(com1)){
             printf("Vous avez entré une commande inconnue : %s",com1);
             free_chem(racine);
             exit(EXIT_FAILURE);
         }
+
         if(com1!=NULL){
 
+        // Puis on effectue les commandes selon les valeurs de "com1","com2","com3"
+        // A noter que s'il existe un chemin supplémentaire là ou il ne devrait pas y en avoir (exemple : cd xx YY), erreur !
         if(strcmp(com1,"touch")==0){
             if(com2!=NULL && com3==NULL){
             touch(courant,com2);
