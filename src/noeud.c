@@ -248,31 +248,31 @@ void ajouter_fils(noeud* parent, liste_noeud* fils) {
     liste_noeud* p = fils;
     while (p != NULL) {
         // Création d'un nouveau nœud fils avec les mêmes propriétés que celui à copier
-        noeud* new_fils = malloc(sizeof(noeud));
-        new_fils->est_dossier = p->no->est_dossier;
-        strcpy(new_fils->nom, p->no->nom);
-        new_fils->pere = parent;
-        new_fils->racine = parent->racine;
-        new_fils->fils = NULL; // initialise la liste des fils à NULL
+        noeud* nouveau_fils = malloc(sizeof(noeud));
+        nouveau_fils->est_dossier = p->no->est_dossier;
+        strcpy(nouveau_fils->nom, p->no->nom);
+        nouveau_fils->pere = parent;
+        nouveau_fils->racine = parent->racine;
+        nouveau_fils->fils = NULL; // initialise la liste des fils à NULL
 
         // Ajout du nouveau fils à la liste des fils du parent
-        liste_noeud* new_liste_noeud = malloc(sizeof(liste_noeud));
-        new_liste_noeud->no = new_fils;
-        new_liste_noeud->succ = NULL;
+        liste_noeud* nouveau_liste_noeud = malloc(sizeof(liste_noeud));
+        nouveau_liste_noeud->no = nouveau_fils;
+        nouveau_liste_noeud->succ = NULL;
 
         if (parent->fils == NULL) {
-            parent->fils = new_liste_noeud;
+            parent->fils = nouveau_liste_noeud;
         }
         else {
-            liste_noeud* last = parent->fils;
-            while (last->succ != NULL) {
-                last = last->succ;
+            liste_noeud* dernier = parent->fils;
+            while (dernier->succ != NULL) {
+                dernier = dernier->succ;
             }
-            last->succ = new_liste_noeud;
+            dernier->succ = nouveau_liste_noeud;
         }
 
         // Copie récursive des descendants
-        ajouter_fils(new_fils, p->no->fils);
+        ajouter_fils(nouveau_fils, p->no->fils);
 
         // Passage au fils suivant dans la liste à copier
         p = p->succ;

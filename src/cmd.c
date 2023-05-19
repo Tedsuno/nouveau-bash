@@ -255,7 +255,7 @@ void cp(noeud* courant,char* chemin_src, char* chemin_dest) {
         exit(EXIT_FAILURE);
     }
     char* ky=chemin_dernier(chemin_dest); //ky prend le dernier nom du dossier/fichier du chemin de destination
-    if (appartient_sous_arbre(src, dest)) {
+    if (appartient_sous_arbre(src, dest)) { //Si le noeud dest appartient au sous arbre de src on arrete le prog.
     printf("Erreur : Le noeud destination est dans le sous-arbre du noeud source.\n");
     free_noeud(copie_src);
     exit(EXIT_FAILURE);
