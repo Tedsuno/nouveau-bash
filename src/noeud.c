@@ -8,6 +8,7 @@
 
 /*-------------------------------------------*/
 noeud* creerNoeud(bool est_dos, const char* nom, noeud* pere,liste_noeud * fils, noeud* racine){
+       //On cree un noeud avec les parametres données en arguments.
        noeud* n=malloc(sizeof(noeud));
        if(n==NULL){
         printf("Erreur allocation memoire creerNoeud.");
@@ -22,6 +23,7 @@ noeud* creerNoeud(bool est_dos, const char* nom, noeud* pere,liste_noeud * fils,
 }
 /*-------------------------------------------*/
 noeud* creerRacine(){
+       //On crée un noeud null qui est un dossier avec commme père et racine lui même
        noeud* r=creerNoeud(true,"",NULL,NULL,NULL);
        if(r==NULL){
         printf("Erreur allocation memoire creerRacine.");
@@ -32,20 +34,22 @@ noeud* creerRacine(){
        return r;
 }
 /*---------------------------------------------------------------*/
-bool existeDeja(noeud* courant,const char *nom){ //fonction permettant de faire la meme chose que appartient 
-liste_noeud* liste = courant->fils;
-char *c = capture(nom);
-while(liste != NULL){
-    if(strcmp(liste->no->nom,c)==0){
-        return true;
+bool existeDeja(noeud* courant,const char *nom){ 
+    //fonction permettant de faire la meme chose que appartient 
+    liste_noeud* liste = courant->fils;
+    char *c = capture(nom);
+    while(liste != NULL){
+        if(strcmp(liste->no->nom,c)==0){
+            return true;
+        }
+        liste = liste->succ;
     }
-    liste = liste->succ;
-}
-free(c);
-return false;
+    free(c);
+    return false;
 }
 /*---------------------------------------------------------------*/
-bool appartient(noeud* courant, const char* chem){ //fonction servant à savoir si un noeud est dans la liste des fils par rapport à un bout de chemin
+bool appartient(noeud* courant, const char* chem){ 
+    //fonction servant à savoir si un noeud est dans la liste des fils par rapport à un bout de chemin
     liste_noeud* current=courant->fils;
     if(current!=NULL){
        while(current!=NULL){
@@ -61,7 +65,8 @@ bool appartient(noeud* courant, const char* chem){ //fonction servant à savoir 
     return false;
 }
 /*---------------------------------------------------------------*/
-noeud* getAppartient(noeud* courant, const char* chem){ //pareil que appartient sauf qu'il renvoie ce noeud s'il existe
+noeud* getAppartient(noeud* courant, const char* chem){ 
+    //pareil que appartient sauf qu'il renvoie ce noeud s'il existe
     liste_noeud* current=courant->fils;
     if(current!=NULL){
        while(current!=NULL){
@@ -78,6 +83,7 @@ noeud* getAppartient(noeud* courant, const char* chem){ //pareil que appartient 
 }
 /*---------------------------------------------------------------*/
 int nb_fils(noeud* courant) {
+    //Ce fonction renvoie le nombre de fils du noeud courant
     if(courant->fils == NULL) return 0;
     int count = 0;
     liste_noeud* fils = courant->fils;
@@ -89,6 +95,7 @@ int nb_fils(noeud* courant) {
 }
 /*-------------------------------------------*/
 char* NomRacine(noeud* courant) {
+    //Ce fonction permet de recupérer le nom de la racine
     char* nom;
     if (courant == courant->racine) {
         nom = malloc(2);
@@ -101,6 +108,7 @@ char* NomRacine(noeud* courant) {
 }
 /*---------------------------------------------------------------*/
 void print_arbre(noeud* courant) {
+    //On commence par affichier la racine sous le format de prin
     char* current=NomRacine(courant);
     char* pere=NomRacine(courant->pere);
     printf("Noeud %s (%s), père : %s, %d fils : ", current, courant->est_dossier ? "D" : "F", pere, nb_fils(courant));
@@ -110,6 +118,7 @@ void print_arbre(noeud* courant) {
         puts("");
         return;
     }
+    //Puis on affiche succesivement tout l'arbre
     liste_noeud *fils=courant->fils;
     while (fils!=NULL) {
         printf("%s (%s), ", fils->no->nom, fils->no->est_dossier ? "D" : "F");
@@ -124,6 +133,7 @@ void print_arbre(noeud* courant) {
 }
 /*-------------------------------------------*/
 void free_chem(noeud* courant){
+    //Cette fonction permet de libérer recursivement tout l'arbre comme vu dans le TP8
     liste_noeud* fils_courant = courant->fils;
     while (fils_courant != NULL) {
         noeud* fils = fils_courant->no;
@@ -136,6 +146,7 @@ void free_chem(noeud* courant){
 }
 /*-------------------------------------------*/
 void free_noeud(noeud* n) {
+    //Cette fonction permet de libérer recursivement tout l'arbre comme vu dans le TP8
     if (n == NULL) {
         return;
     }
@@ -150,6 +161,7 @@ void free_noeud(noeud* n) {
 }
 /*-------------------------------------------*/
 bool estParent(noeud* courant, noeud* parent){
+    //Cette focntion pemet de savoir si parent est bel est bien un parent de courant pour rm
     noeud* g=courant;
     while(g!=courant->racine){
         if(parent==g){
@@ -160,7 +172,8 @@ bool estParent(noeud* courant, noeud* parent){
     return false;
 }
 /*-------------------------------------------*/
-noeud * rechercher_noeud(noeud * courant, char * chem) {
+noeud* rechercher_noeud(noeud * courant, char * chem) {
+    //Cette fonction permet de rechercher le noeud à la fin de chem en partant de courant
     noeud * res = courant;
     char * c = capture(chem);
     if (strlen(c) == 0) return courant -> racine;
@@ -204,7 +217,7 @@ noeud* copier_noeud(noeud* src) { //fonction qui copie un noeud et tout ses fils
         return NULL;
         exit(EXIT_FAILURE);
     }
-    noeud* copie = (noeud*)malloc(sizeof(noeud)); //on alloue de la mémoire pour un futur noeud copie
+    noeud* copie = malloc(sizeof(noeud)); //on alloue de la mémoire pour un futur noeud copie
     copie->est_dossier = src->est_dossier;        //si src est un dossier, copie le sera également et inversement
     strncpy(copie->nom, src->nom, 100);           //on copie le nom de src dans le noeud copie dans la limite de 100 caractères
     copie->pere = src->pere;                      //le père de src sera également le père de copie
@@ -216,7 +229,7 @@ noeud* copier_noeud(noeud* src) { //fonction qui copie un noeud et tout ses fils
     //on a copié le noeud courant complétement, maintenant on va passer à ses fils(et les fils de ses fils etc)
 
     while (src_fils != NULL) {                                  //tant que src à toujours un fils
-        copie_fils = (liste_noeud*)malloc(sizeof(liste_noeud)); //on alloue de la mémoire pour une liste de noeud de copie
+        copie_fils = malloc(sizeof(liste_noeud)); //on alloue de la mémoire pour une liste de noeud de copie
         copie_fils->no = copier_noeud(src_fils->no);            //récursivement on ajoute au fils de copie le fils de src
         copie_fils->succ = NULL;                                //son succésseur est null pour tant qu'on a pas encore ajouté d'autre fils
         if (prev_fils == NULL) {                                //ensuite on regarde si c'est le premier fils ajouté ou non et on manipule les succésseur en fonction de ça
@@ -235,7 +248,7 @@ void ajouter_fils(noeud* parent, liste_noeud* fils) {
     liste_noeud* p = fils;
     while (p != NULL) {
         // Création d'un nouveau nœud fils avec les mêmes propriétés que celui à copier
-        noeud* new_fils = (noeud*)malloc(sizeof(noeud));
+        noeud* new_fils = malloc(sizeof(noeud));
         new_fils->est_dossier = p->no->est_dossier;
         strcpy(new_fils->nom, p->no->nom);
         new_fils->pere = parent;
@@ -243,7 +256,7 @@ void ajouter_fils(noeud* parent, liste_noeud* fils) {
         new_fils->fils = NULL; // initialise la liste des fils à NULL
 
         // Ajout du nouveau fils à la liste des fils du parent
-        liste_noeud* new_liste_noeud = (liste_noeud*)malloc(sizeof(liste_noeud));
+        liste_noeud* new_liste_noeud = malloc(sizeof(liste_noeud));
         new_liste_noeud->no = new_fils;
         new_liste_noeud->succ = NULL;
 
@@ -265,16 +278,19 @@ void ajouter_fils(noeud* parent, liste_noeud* fils) {
         p = p->succ;
     }
 }
-bool appartient_sous_arbre(noeud* racine, noeud* noeud_a_chercher) {
-    if (racine == NULL || noeud_a_chercher == NULL) {
+bool appartient_sous_arbre(noeud* racine, noeud* noeud_potentiel) {
+    //Cette fonction cherche recursivement si le noeud_potentiel appartient au sous arbre de racine
+    if (racine == NULL || noeud_potentiel == NULL) {
         return false;
     }
-    if (racine == noeud_a_chercher) {
+    if (racine == noeud_potentiel) {
         return true;
     }
     liste_noeud* fils_courant = racine->fils;
+    //On parcours ainsi tous les fils du noeud courant recursivement
     while (fils_courant != NULL) {
-        if (appartient_sous_arbre(fils_courant->no, noeud_a_chercher)) {
+        //Si le noeud appartient on return true et on autorise pas cp
+        if (appartient_sous_arbre(fils_courant->no, noeud_potentiel)) {
             return true;
         }
         fils_courant = fils_courant->succ;

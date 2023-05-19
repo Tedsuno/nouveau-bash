@@ -2,24 +2,22 @@ CC = gcc
 CFLAGS = -Wall -I include/ -g
 LDFLAGS =
 
-SRC_DIR = src/
-OBJ_DIR = obj/
-BIN_DIR = bin/
+SRC = src/
+OBJ = obj/
+BIN = bin/
 
-SRC_FILES = $(wildcard $(SRC_DIR)*.c)
-OBJ_FILES = $(patsubst $(SRC_DIR)%.c, $(OBJ_DIR)%.o, $(SRC_FILES))
+SRC_CONTENT = $(wildcard $(SRC)*.c)
+OBJ_CONTENT = $(patsubst $(SRC)%.c, $(OBJ)%.o, $(SRC_CONTENT))
 
-TARGET = $(BIN_DIR)program
+PROG = $(BIN)program
 
-.PHONY: all clean
+all: $(PROG)
 
-all: $(TARGET)
-
-$(TARGET): $(OBJ_FILES)
+$(PROG): $(OBJ_CONTENT)
 	$(CC) $(LDFLAGS) $^ -o $@
 
-$(OBJ_DIR)%.o: $(SRC_DIR)%.c
+$(OBJ)%.o: $(SRC)%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJ_DIR)*.o $(TARGET) || del /s "*.o" "$(TARGET)";
+	rm -f $(OBJ)*.o $(PROG) || del /s "*.o" "$(PROG)";
