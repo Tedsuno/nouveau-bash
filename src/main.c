@@ -16,25 +16,28 @@ bool is_commande(char* ch){
 }
 
 char* commande_terminale(char* phrase, int count) {
-    char* resultat = strdup(phrase);
+    char* resultat = strcpy(malloc(strlen(phrase) + 1), phrase);
     char* token = NULL;
-    
+
     for (int i = 0; i < count; i++) {
         if (resultat != NULL) {
             token = strtok(resultat, " \n\r");
             resultat = strtok(NULL, "");
         } else {
+            free(resultat);
             return NULL;  // Renvoie NULL si le nombre de mots est dépassé
         }
     }
+
     if (token != NULL) {
-        return strdup(token);
+        char* copie_token = strcpy(malloc(strlen(token) + 1), token);
+        return copie_token;
     } else {
         free(resultat);
-        free(token);
         return NULL;
     }
 }
+
 
 /*--------------------------------------------------------*/
 int main(int argc, char *argv[]){
@@ -56,6 +59,7 @@ int main(int argc, char *argv[]){
     }
 
     while (fgets(ch, 50, flux) != NULL) {
+
         char* com1=commande_terminale(ch,1);
         char* com2=commande_terminale(ch,2);
         char* com3=commande_terminale(ch,3);
@@ -64,14 +68,19 @@ int main(int argc, char *argv[]){
         if(!is_commande(com1)){
             printf("Vous avez entré une commande inconnue : %s",com1);
             free_chem(racine);
-            free(racine);
-            free(com1);
-            free(com2);
-            free(com3);
-            free(com4);
             exit(EXIT_FAILURE);
         }
         if(com1!=NULL){
+
+        if(strcmp(com1,"touch")==0){
+            if(com2!=NULL && com3==NULL){
+            touch(courant,com2);
+            }
+            else{
+                perror("erreur touch, ne respecte pas le format de base."); free_chem(racine);
+                free(racine); exit(EXIT_FAILURE);  
+            }
+        }
 
         if(strcmp(com1,"mkdir")==0){
             if(com2!=NULL && com3==NULL){
@@ -79,10 +88,6 @@ int main(int argc, char *argv[]){
             }
             else{
                 perror("erreur mkdir, ne respecte pas le format de base."); free_chem(racine);
-                free(com1);
-                free(com2);
-                free(com3);
-                free(com4);
                 free(racine); exit(EXIT_FAILURE);  
             }
         }
@@ -97,10 +102,6 @@ int main(int argc, char *argv[]){
             }
             else{
                 perror("erreur print, ne respecte pas le format de base."); free_chem(racine);
-                free(com1);
-                free(com2);
-                free(com3);
-                free(com4);
                 free(racine); exit(EXIT_FAILURE);  
             }
         }
@@ -108,10 +109,6 @@ int main(int argc, char *argv[]){
             if(com2!=NULL && com3!=NULL && com4==NULL) mv(courant,com2,com3);
             else{   
                 perror("erreur, mv ne respecte pas le format de base."); free_chem(racine);
-                free(com1);
-                free(com2);
-                free(com3);
-                free(com4);
                 free(racine); exit(EXIT_FAILURE); 
             }
         }
@@ -120,10 +117,6 @@ int main(int argc, char *argv[]){
             if(com2!=NULL && com3!=NULL && com4==NULL) cp(courant,com2,com3);
             else{ 
                 perror("erreur, cp ne respecte pas le format de base."); free_chem(racine);
-                free(com1);
-                free(com2);
-                free(com3);
-                free(com4);
                 free(racine); exit(EXIT_FAILURE); 
             }
         } 
@@ -136,10 +129,6 @@ int main(int argc, char *argv[]){
             }
             else{
                 perror("erreur ls, ne respecte pas le format de base."); free_chem(racine);
-                free(com1);
-                free(com2);
-                free(com3);
-                free(com4);
                 free(racine); exit(EXIT_FAILURE);  
             }
         }
@@ -149,10 +138,6 @@ int main(int argc, char *argv[]){
             }
             else{
                 perror("erreur rm, ne respecte pas le format de base."); free_chem(racine);
-                free(com1);
-                free(com2);
-                free(com3);
-                free(com4);
                 free(racine); exit(EXIT_FAILURE);  
             }
        }
@@ -166,23 +151,6 @@ int main(int argc, char *argv[]){
             else{
                 printf("%s",com1);
                 perror("erreur pwd, ne respecte pas le format de base."); free_chem(racine);
-                free(com1);
-                free(com2);
-                free(com3);
-                free(com4);
-                free(racine); exit(EXIT_FAILURE);  
-            }
-        }
-        if(strcmp(com1,"touch")==0){
-            if(com2!=NULL && com3==NULL){
-            touch(courant,com2);
-            }
-            else{
-                perror("erreur touch, ne respecte pas le format de base."); free_chem(racine);
-                free(com1);
-                free(com2);
-                free(com3);
-                free(com4);
                 free(racine); exit(EXIT_FAILURE);  
             }
         }
@@ -198,25 +166,17 @@ int main(int argc, char *argv[]){
             else{
                 perror("erreur cd, ne respecte pas le format de base.");
                 free_chem(racine);
-                free(com1);
-                free(com2);
-                free(com3);
-                free(com4);
                 free(racine);
                 exit(EXIT_FAILURE);
             }  
         }
-        }else{
+        }
             free(com1);
             free(com2);
             free(com3);
             free(com4);
-        }
-        free(com1);
-        free(com2);
-        free(com3);
-        free(com4);
     }
+
     int r = fclose(flux);
     if (r != 0) {
         perror("Probleme fermeture de fichier");
@@ -225,3 +185,4 @@ int main(int argc, char *argv[]){
     free(racine);
     return 0;
 }
+

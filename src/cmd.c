@@ -7,14 +7,11 @@
 #include <stdbool.h>
 /*-------------------------------------------*/
 void ls(noeud* courant){
-    //On prend la liste des fils du noeud courant
     liste_noeud* fils=courant->fils;
     while(fils!=NULL){
-        //Si c'est un dossier on met un / après le nom
         if(fils->no->est_dossier){
-          printf("%s/\n",fils->no->nom);
+          printf("%s\n",fils->no->nom);
         }
-        //Sinon on affiche le nom du fichier
         else{
           printf("%s\n",fils->no->nom);
         }
@@ -25,19 +22,16 @@ void ls(noeud* courant){
 noeud* cd_chem(noeud* courant, const char* chem){
     noeud* res=courant;
     char* c=capture(chem);
-    //Si c'est un chemin absolu on part de la racine
     if(c[0]=='/') res=courant->racine;
        if(c[1]!='/'){
        char* chemin = capture(chem);
        if (res->fils != NULL && chemin != NULL) {
         char* token = strtok(chemin, "/");
-        //Ensuite on coupe le chemin des qu'on voit un / et on si le noeud token existe dans res
         do {
             if (appartient(res, token)) {
                 res = getAppartient(res, token);
                 token = strtok(NULL, "/");
             } else {
-                //Si on trouve pas on revient au noeud d'origine de l'appel
                 res=courant;
                 perror("No such file or directory ssssd");
                 free(chemin);
@@ -91,7 +85,7 @@ void pwd(noeud* courant){
     }
     
     strcpy(chaine, path);
-    //Le temps qu'on est pas à la racine on monte de pere en pere en concatenant le tout avec des /
+    
     while(c->pere != c->racine){
         c = c->pere;
         strcpy(chaine2, chaine);
@@ -112,19 +106,15 @@ void mkdir(noeud* parent, const char *nom) {
         perror("erreor nom invalide");
         exit(EXIT_FAILURE);
     }
-    //Si le noeud a un nom valide et n'existe pas déjà
     if(estValide(nom) && !existeDeja(parent,nom)){
     char *n=capture(nom);
     noeud *newDir=creerNoeud(true,n,parent,NULL,parent->racine);
     newDir->pere=parent;
-    //Si les fils sont nuls on ajoute en tant que premier fils de parent le noeud neoud
     if (parent->fils == NULL) { 
         parent->fils = malloc(sizeof(liste_noeud));
         parent->fils->no = newDir;
         parent->fils->succ = NULL;
-    } 
-    //Sinon on parcours la liste des fils jusque la fin et on ajoute à la fin le noeud
-    else {
+    } else {
         liste_noeud* ptr = parent->fils;
         while (ptr->succ != NULL) {
             ptr = ptr->succ;
@@ -146,17 +136,14 @@ void touch(noeud* courant, const char* nom) {
         perror("erreor nom invalide");
         exit(EXIT_FAILURE);
     }
-    //Si le noeud a un nom valide et n'existe pas déjà
     if (estValide(nom) && !existeDeja(courant, nom)) {
         char* c = capture(nom);
         noeud* newFic = creerNoeud(false, c, courant, NULL, courant->racine);
-        //Si les fils sont nuls on ajoute en tant que premier fils de parent le noeud neoud
         if (courant->fils == NULL) {
             courant->fils = malloc(sizeof(liste_noeud));
             courant->fils->no = newFic;
             courant->fils->succ = NULL;
         }
-        //Sinon on parcours la liste des fils jusque la fin et on ajoute à la fin le noeud
         else {
             liste_noeud* liste = courant->fils;
             while (liste->succ != NULL) {
@@ -177,7 +164,6 @@ void touch(noeud* courant, const char* nom) {
 void rm(noeud* courant,const char* chem){
     noeud* toDelete = courant;   
     char* c=capture(chem);
-    //On commence par parcourir comme cd pour trouver le noeud à supprimer
     if(c[0]=='/') toDelete = courant->racine;
        if(c[1]!='/'){
     char* chemin = capture(chem);
@@ -207,14 +193,10 @@ void rm(noeud* courant,const char* chem){
         free(c);
         return;
     }
-    //Ensuite, on prend la liste des fils du pere de toDelete
     liste_noeud* fils_de_pere=toDelete->pere->fils;
-    //On suppprime tout les enfants de toDelete
     free_chem(toDelete);
-    //Ensuite on parcours la liste des fils du pere et on cherche le noeud à supprimer
     liste_noeud* prev_fils = NULL;
     while(fils_de_pere != NULL){
-        //Si c'est le noeud on dit change les pointeurs et on dit que le neoud est egal au suivant
         if(fils_de_pere->no == toDelete){
             if(prev_fils == NULL){
                 toDelete->pere->fils = fils_de_pere->succ;
@@ -255,7 +237,7 @@ void cp(noeud* courant,char* chemin_src, char* chemin_dest) {
         exit(EXIT_FAILURE);
     }
     char* ky=chemin_dernier(chemin_dest); //ky prend le dernier nom du dossier/fichier du chemin de destination
-    if (appartient_sous_arbre(src, dest)) { //Si le noeud dest appartient au sous arbre de src on arrete le prog.
+    if (appartient_sous_arbre(src, dest)) {
     printf("Erreur : Le noeud destination est dans le sous-arbre du noeud source.\n");
     free_noeud(copie_src);
     exit(EXIT_FAILURE);
@@ -263,11 +245,11 @@ void cp(noeud* courant,char* chemin_src, char* chemin_dest) {
     if(!appartient(dest,ky)){             //si par rapport au noeud courant, il n'y a pas de fils portant le nom de ky, on le crée.
     mkdir(dest,ky);
     dest=cd_chem(dest,ky);
-    ajouter_fils(dest, copie_src->fils);   //On ajoute les fils à dest de la copie qu'on a fait
+    ajouter_fils(dest, copie_src->fils);
     free(py);
     }else{                               //sinon on avance dans ce dossier/fichier et on ajoute les fils 
     dest=cd_chem(dest,ky);
-    ajouter_fils(dest, copie_src->fils); //On ajoute les fils à dest de la copie qu'on a fait
+    ajouter_fils(dest, copie_src->fils);
     free(py);
     }
 }

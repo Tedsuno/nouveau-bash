@@ -278,6 +278,7 @@ void ajouter_fils(noeud* parent, liste_noeud* fils) {
         p = p->succ;
     }
 }
+/*-------------------------------------------*/
 bool appartient_sous_arbre(noeud* racine, noeud* noeud_potentiel) {
     //Cette fonction cherche recursivement si le noeud_potentiel appartient au sous arbre de racine
     if (racine == NULL || noeud_potentiel == NULL) {
